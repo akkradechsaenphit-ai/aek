@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LookLens กล้องวงจรปิด</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%230d5f44'/><circle cx='50' cy='50' r='20' fill='%23a8f2ce'/></svg>">
+<style>
+:root{--primary:#004630;--primary2:#0d5f44;--sage:#beecb9;--red:#ba1a1a;--ink:#161d1a;--muted:#8a948e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#0c1210;color:#fff}
+body{font:18px/1.5 "Plus Jakarta Sans","Noto Sans Thai",-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+.sv{display:block;flex:none}
+header{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#0d5f44,#10b981);display:grid;place-items:center;color:#fff}
+header b{display:block;font-size:21px;line-height:1.1}header small{color:#9fb3a8;font-size:14px;font-weight:600}
+.dot{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;padding:7px 14px;border-radius:20px;background:#26322d;color:#b8c7bf}
+.dot i{width:10px;height:10px;border-radius:50%;background:#7b8a82}
+.dot.on{background:#7a1b17;color:#fff}.dot.on i{background:#ff6b60;animation:p 1.2s infinite}
+@keyframes p{50%{opacity:.3}}
+.stage{position:relative;flex:1;min-height:0;margin:0 12px;border-radius:22px;overflow:hidden;background:#000;display:grid;place-items:center}
+.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.ph{padding:24px;text-align:center;color:#b9c8bf;font-size:17px}.ph b{display:block;color:#fff;font-size:21px;margin-bottom:6px}
+.viewer{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.6);border-radius:16px;padding:6px 14px;font-size:15px;font-weight:700;display:flex;gap:8px;align-items:center}
+.info{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.55);border-radius:14px;padding:4px 12px;font-size:13px;color:#cfe0d6}
+.controls{padding:14px 16px calc(16px + env(safe-area-inset-bottom));display:grid;gap:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{border:0;border-radius:20px;padding:16px 18px;font:inherit;font-weight:800;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;min-height:64px;text-decoration:none;color:#fff;width:100%}
+.btn.go{background:#1f9d5c}.btn.stop{background:var(--red)}.btn.alt{background:#26322d}.btn.hint{background:#3b4b44}
+.btn:disabled{opacity:.5}
+.msg{font-size:15px;color:#cfe0d6;text-align:center;min-height:22px}.msg.err{color:#ffb4ab;font-weight:700}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:flex;align-items:flex-end;justify-content:center}.sheet-bg[hidden]{display:none}
+.sheet{background:#fff;color:var(--ink);width:100%;max-width:480px;border-radius:28px 28px 0 0;padding:24px 18px 30px}
+.sheet h2{margin:0 0 10px;font-size:24px;display:flex;gap:8px;align-items:center}
+.sheet input{width:100%;border:2px solid #dde4df;border-radius:16px;padding:14px;font:inherit;font-size:30px;letter-spacing:.3em;text-align:center}
+.sheet .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.sheet .btn.alt{background:#e8f0ec;color:var(--primary)}.sheet .btn.go{background:var(--primary)}
+.sheet p{margin:0 0 8px;font-size:17px}
+[hidden]{display:none!important}
+</style>
+<script src="carely-shared.js"></script>
+</head>
+<body>
+<header>
+  <div class="logo" data-ic="leaf" data-s="26"></div>
+  <div><b>LookLens กล้อง</b><small>มือถือเครื่องนี้เป็นกล้องวงจรปิด</small></div>
+  <div class="dot" id="live"><i></i><span id="liveTxt">ยังไม่ส่งภาพ</span></div>
+</header>
+
+<div class="stage">
+  <video id="v" autoplay playsinline muted hidden></video>
+  <div class="ph" id="ph"><b>พร้อมส่งภาพให้คอม</b>วางมือถือให้เห็นพื้นที่ที่ต้องการ แล้วกด “เริ่มส่งภาพ” ภาพจะขึ้นบนหน้าเว็บ LookLens ในคอมแบบเรียลไทม์</div>
+  <div class="viewer" id="viewer" hidden></div>
+  <div class="info" id="info" hidden></div>
+</div>
+
+<div class="controls">
+  <div class="msg" id="msg"></div>
+  <a class="btn hint" id="httpsBtn" href="#" hidden>มือถือเปิดกล้องได้ต้องใช้ https · แตะเพื่อเปิดแบบ https</a>
+  <button class="btn go" id="start" type="button"></button>
+  <div class="row2">
+    <button class="btn alt" id="flip" type="button" disabled></button>
+    <button class="btn alt" id="qual" type="button" disabled>ภาพ 720p</button>
+  </div>
+</div>
+
+<div class="sheet-bg" id="sheetBg" hidden><div class="sheet" id="sheet"></div></div>
+
+<script>
+'use strict';
+// ================= tiny icon helper =================
+const IC = Object.assign({
+  leaf: '<path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>',
+  camera: '<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="4"/>',
+  stop: '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>',
+  flip: '<path d="M4 8h12l-3-3M20 16H8l3 3"/>',
+  alert: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+}, CARELY.ICONS);
+const ic = (n, s = 24) => `<svg class="sv" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || IC.info}</svg>`;
+document.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = ic(el.dataset.ic, +el.dataset.s || 24); });
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// ================= camera (video only; no microphone, no detection) =================
+let frameUntil = 0, frameBusy = false;
+let stream = null, running = false, facing = localStorage.getItem('carely-cctv-facing') || 'environment', qualityIdx = +(localStorage.getItem('carely-cctv-q') || 1), wake = null;
+const QUALITY = [['480p', 640, 480], ['720p', 1280, 720], ['1080p', 1920, 1080]];
+const ERR = {
+  NotAllowedError: 'ไม่ได้รับอนุญาตให้ใช้กล้อง · กดไอคอนแม่กุญแจข้างที่อยู่เว็บ เลือก “อนุญาต” กล้อง แล้วลองใหม่',
+  NotFoundError: 'ไม่พบกล้องในเครื่องนี้',
+  NotReadableError: 'กล้องถูกแอปอื่นใช้อยู่ ปิดแอปนั้นแล้วลองใหม่',
+  OverconstrainedError: 'กล้องไม่รองรับความละเอียดนี้ ลองลดเป็น 480p',
+  SecurityError: 'ต้องเปิดหน้านี้แบบ https ถึงจะใช้กล้องได้',
+};
+function setMsg(t, err = false) { $('msg').textContent = t; $('msg').classList.toggle('err', err); }
+const isWatched = () => (rtc.state !== 'idle' && rtc.mode === 'watch') || Date.now() < frameUntil;    // someone is looking (video link or pictures)
+function paint() {
+  const watching = isWatched();
+  $('start').className = 'btn ' + (running ? 'stop' : 'go');
+  $('start').innerHTML = running ? `${ic('stop', 26)}หยุดส่งภาพ` : `${ic('camera', 28)}เริ่มส่งภาพ`;
+  $('flip').innerHTML = `${ic('flip', 24)}${facing === 'environment' ? 'ใช้กล้องหน้า' : 'ใช้กล้องหลัง'}`;
+  $('qual').textContent = `ภาพ ${QUALITY[qualityIdx][0]}`;
+  $('flip').disabled = $('qual').disabled = !running;
+  $('live').classList.toggle('on', running); $('liveTxt').textContent = running ? 'กำลังส่งภาพ' : 'ยังไม่ส่งภาพ';
+  $('v').hidden = !running; $('ph').hidden = running;
+  if (running) $('httpsBtn').hidden = true;
+  const vw = $('viewer'); vw.hidden = !running; vw.innerHTML = watching ? `${ic('eye', 20)}คอมกำลังดูอยู่` : `${ic('eye', 20)}รอคอมเชื่อมต่อ…`;
+  const t = stream && stream.getVideoTracks()[0], st = t && t.getSettings ? t.getSettings() : null;
+  $('info').hidden = !(running && st && st.width); if (st && st.width) $('info').textContent = `${st.width}×${st.height}${st.frameRate ? ' · ' + Math.round(st.frameRate) + ' fps' : ''} · กล้อง${facing === 'environment' ? 'หลัง' : 'หน้า'}`;
+}
+async function openCam() {
+  const [, w, h] = QUALITY[qualityIdx];
+  const tryGet = c => navigator.mediaDevices.getUserMedia({ video: c, audio: false });
+  try { return await tryGet({ facingMode: { ideal: facing }, width: { ideal: w }, height: { ideal: h } }); }
+  catch (e) { if (e.name === 'OverconstrainedError' || e.name === 'NotFoundError') return tryGet(true); throw e; }
+}
+async function keepAwake() { try { wake = await navigator.wakeLock?.request('screen'); } catch {} }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && running) keepAwake(); });
+
+async function startCam() {
+  if (running) return;
+  $('start').disabled = true;
+  try {
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) throw Object.assign(Error(), { name: 'SecurityError' });
+    setMsg('กำลังขอใช้กล้อง · กด “อนุญาต” เมื่อเบราว์เซอร์ถาม');
+    stream = await openCam();
+    $('v').srcObject = stream; await $('v').play().catch(() => {});
+    running = true; localStorage.setItem('carely-cctv-on', '1');
+    setMsg('ส่งภาพอยู่ · เปิดหน้านี้ค้างไว้และอย่าล็อกหน้าจอ (ระบบกันหน้าจอดับให้แล้ว)');
+    keepAwake(); publish();
+  } catch (e) {
+    stream = null;
+    setMsg(ERR[e.name] || `เปิดกล้องไม่ได้: ${e.message || e.name}`, true);
+  }
+  $('start').disabled = false; paint();
+}
+function stopCam() {
+  if (rtc.state !== 'idle') rtc.hangup();
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; running = false; $('v').srcObject = null; localStorage.removeItem('carely-cctv-on');
+  try { wake && wake.release(); } catch {} wake = null;
+  setMsg('หยุดส่งภาพแล้ว'); publish(); paint();
+}
+$('start').onclick = () => running ? stopCam() : startCam();
+$('flip').onclick = async () => { facing = facing === 'environment' ? 'user' : 'environment'; localStorage.setItem('carely-cctv-facing', facing); await restart(); };
+$('qual').onclick = async () => { qualityIdx = (qualityIdx + 1) % QUALITY.length; localStorage.setItem('carely-cctv-q', String(qualityIdx)); await restart(); };
+async function restart() {            // new camera / quality: swap the picture without dropping the viewer
+  try {
+    const next = await openCam();
+    stream.getTracks().forEach(t => t.stop());
+    stream = next; $('v').srcObject = stream; await $('v').play().catch(() => {});
+    await rtc.replaceVideo?.(stream);
+  } catch (e) { setMsg(ERR[e.name] || 'เปลี่ยนกล้องไม่ได้', true); }
+  if (rtc.state !== 'idle' && rtc.mode === 'watch') { rtc.hangup(); setMsg('เปลี่ยนกล้องแล้ว · คอมจะเชื่อมต่อใหม่เอง'); }   // simplest reliable way to carry the new picture
+  publish(); paint();
+}
+
+// ================= link to the PC (relay, pairing) =================
+const bus = CARELY.makeBus('elder');
+const rtc = CARELY.makeRtc({
+  role: 'elder',
+  send: m => bus.send(m),
+  canWatch: () => running && !!stream,
+  getWatchStream: async () => stream,
+  getCallStream: async () => null,
+  onIncoming: () => rtc.decline(),            // this page is only a camera, not a phone
+  onState: () => { paint(); publish(); },
+  onEnd: () => { paint(); publish(); },
+});
+function publish() {
+  const watching = isWatched();
+  bus.send({ type: 'state', snap: { ts: Date.now(), cctv: true, running, label: 'กล้องมือถือ', facing, sharing: watching, viewers: watching ? 1 : 0, totals: {}, fallCount: 0, gamesToday: 0, standTimes: [], bathTimes: [], workouts: [], events: [], alert: null, playing: null, offer: null } });
+}
+bus.on(m => {
+  if (m.type === '_pair') { if (!sessionStorage.getItem('carely-pair-asked')) { sessionStorage.setItem('carely-pair-asked', '1'); showPairing(m); } setMsg('ยังไม่ได้จับคู่กับคอม · แตะ “เริ่มส่งภาพ” แล้วใส่รหัส', true); return; }
+  if (m.type === '_relay') { publish(); return; }
+  if (m.type === 'frames_stop') { frameUntil = 0; return; }
+  if (m.type === 'frames_req') { frameUntil = Date.now() + 10000; return; }      // asked by the family app or the home screen on the PC
+  if (m._from !== 'family') return;
+  if (m.to === 'elder') return;              // addressed to the home screen (calls)
+  if (m.type === 'rtc') rtc.handle(m);
+  else if (m.type === 'frames_req') frameUntil = Date.now() + 10000;
+  else if (m.type === 'hello') publish();
+  else if (m.type === 'cam_request' && !running) startCam();
+});
+setInterval(() => { publish(); paint(); }, 1000);
+
+// fallback: if the PC cannot open the direct video link, send small still pictures through the server (only while the PC asks for them)
+const fc = document.createElement('canvas');
+setInterval(async () => {
+  const v = $('v');
+  if (!running || frameBusy || Date.now() > frameUntil || !v.videoWidth || (rtc.state === 'connected' && rtc.mode === 'watch')) return;
+  frameBusy = true;
+  try {
+    const w = Math.min(640, v.videoWidth), h = Math.round(w * v.videoHeight / v.videoWidth);
+    fc.width = w; fc.height = h; fc.getContext('2d').drawImage(v, 0, 0, w, h);
+    await bus.send({ type: 'frame', img: fc.toDataURL('image/jpeg', 0.6) });
+  } catch {}
+  frameBusy = false;
+}, 200);
+
+function showPairing(m) {
+  const full = m && m.open === false;
+  $('sheet').innerHTML = `<h2>${ic('alert', 28)}จับคู่กับคอม</h2>` + (full
+    ? `<p>คอมเครื่องนี้จับคู่กับมือถือไว้แล้ว 1 เครื่อง ถ้าจะเปลี่ยนมือถือ ให้รัน <b>py server.py --reset-pairing</b> บนคอม</p><div class="two"><button class="btn alt" id="pinClose" type="button">ปิด</button></div>`
+    : `<p>ใส่รหัส 6 หลักที่แสดงในหน้าต่างสีดำบนคอม (ทำครั้งเดียว)</p><input id="pinIn" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="รหัส 6 หลัก">
+       <p id="pinMsg" style="color:#ba1a1a;font-weight:700;min-height:24px;margin-top:8px"></p><div class="two"><button class="btn alt" id="pinClose" type="button">ไว้ทีหลัง</button><button class="btn go" id="pinGo" type="button">จับคู่</button></div>`);
+  $('sheetBg').hidden = false; $('pinClose').onclick = () => { $('sheetBg').hidden = true; };
+  if (full) return;
+  const go = async () => {
+    const r = await bus.pair($('pinIn').value);
+    if (r.ok) { $('sheetBg').hidden = true; setMsg('จับคู่สำเร็จ'); publish(); return; }
+    $('pinMsg').textContent = { 'wrong-pin': 'รหัสไม่ถูกต้อง', 'android-only': 'จับคู่ได้เฉพาะโทรศัพท์แอนดรอย', full: 'จับคู่ครบแล้ว', locked: `ลองผิดหลายครั้ง รออีก ${r.wait || 60} วินาที`, network: 'ติดต่อคอมไม่ได้' }[r.error] || 'จับคู่ไม่สำเร็จ';
+  };
+  $('pinGo').onclick = go; $('pinIn').onkeydown = e => { if (e.key === 'Enter') go(); }; $('pinIn').focus();
+}
+
+// ================= start =================
+if (!window.isSecureContext && location.protocol === 'http:') { const b = $('httpsBtn'); b.href = `https://${location.hostname}:8443${location.pathname}`; b.hidden = false; if (!sessionStorage.getItem('nohttps')) { sessionStorage.setItem('nohttps', '1'); location.replace(b.href + location.search); } }
+window.addEventListener('pagehide', () => { if (rtc.state !== 'idle') rtc.hangup(); });
+paint(); publish();
+// if this page was sending before (screen was reloaded), try to resume without another tap
+if (localStorage.getItem('carely-cctv-on') === '1' && window.isSecureContext) startCam();
+</script>
+</body>
+</html>
