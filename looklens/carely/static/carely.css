@@ -1,0 +1,32 @@
+/* Carely shared styles: same palette as the Carely web prototype. */
+:root {
+  --ink: #3f4541; --muted: #7b847e; --line: #e6e8e1; --paper: #f8f7f3; --white: #fff;
+  --sage: #718b72; --sage-dark: #5a735b; --sage-pale: #eaf1e9;
+  --coral: #d69a8c; --coral-pale: #f8efec;
+  --amber: #9d712c; --amber-pale: #fbf5e8;
+  --red: #a33d3b; --red-pale: #fff0ee;
+  --shadow: 0 8px 25px rgba(80, 80, 60, .06);
+  --radius: 18px;
+  --font: "Noto Sans Thai", "Sarabun", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.55 var(--font); }
+button { font: inherit; cursor: pointer; border: 0; border-radius: 14px; padding: 10px 16px; background: var(--sage-pale); color: var(--sage-dark); font-weight: 600; transition: transform .08s, background .15s; }
+button:hover { background: #dfeadd; }
+button:active { transform: scale(.97); }
+button.primary { background: var(--sage); color: #fff; }
+button.primary:hover { background: var(--sage-dark); }
+button.danger { background: var(--red); color: #fff; }
+button.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+button:disabled { opacity: .45; cursor: default; }
+input, textarea, select { font: inherit; color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; }
+input:focus, textarea:focus, select:focus, button:focus-visible { outline: 3px solid #b9cdb9; outline-offset: 1px; }
+.logo { font-size: 25px; font-weight: 750; color: var(--sage); letter-spacing: -.4px; }
+.logo span { color: var(--coral); }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; border-radius: 50px; padding: 5px 12px; background: var(--sage-pale); color: var(--sage-dark); white-space: nowrap; }
+.chip.warn { background: var(--amber-pale); color: var(--amber); }
+.chip.bad { background: var(--red-pale); color: var(--red); }
+.chip.off { background: #efefeb; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+[hidden] { display: none !important; }

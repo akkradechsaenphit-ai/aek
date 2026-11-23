@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carely ลูกหลาน</title>
+<link rel="icon" href="/static/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/carely.css">
+<style>
+  nav { height: 68px; background: var(--white); display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 max(16px, calc((100% - 1200px) / 2)); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+  .nav-right { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  main { max-width: 1200px; margin: auto; padding: 28px 16px 64px; }
+  .welcome h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -.4px; }
+  .welcome p { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+  .card h2 { font-size: 18px; margin: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .card-head span { color: var(--muted); font-size: 13px; }
+
+  .alerts { display: grid; gap: 12px; margin-bottom: 18px; }
+  .alert { background: var(--red); color: #fff; border-radius: var(--radius); padding: 18px 20px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; box-shadow: 0 10px 30px rgba(163, 61, 59, .25); }
+  .alert.warning { background: var(--amber); }
+  .alert.acked { background: #fff; color: var(--ink); border: 2px solid var(--red); box-shadow: var(--shadow); }
+  .alert .big { font-size: 36px; }
+  .alert h3 { margin: 0; font-size: 20px; }
+  .alert p { margin: 2px 0 0; opacity: .9; font-size: 14px; }
+  .alert .acts { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .alert.checking { background: var(--amber-pale); color: var(--amber); border: 2px solid var(--amber); box-shadow: var(--shadow); }
+  .bell-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0 4px; }
+  #bellState { font-weight: 600; margin-right: auto; }
+
+  .sos { position: fixed; inset: 0; z-index: 50; background: rgba(120, 30, 28, .92); display: grid; place-items: center; padding: 16px; animation: sosPulse 1.4s ease-in-out infinite; }
+  @keyframes sosPulse { 50% { background: rgba(163, 61, 59, .96); } }
+  .sos-box { background: #fff; color: var(--ink); border-radius: 26px; padding: 28px 24px; width: min(520px, 100%); text-align: center; box-shadow: 0 30px 80px rgba(0, 0, 0, .35); }
+  .sos-ic { font-size: 64px; line-height: 1; }
+  .sos-kicker { margin: 8px 0 0; color: var(--red); font-weight: 700; letter-spacing: .5px; }
+  .sos-box h2 { margin: 2px 0 6px; font-size: 30px; color: var(--red); }
+  .sos-where { font-size: 18px; font-weight: 600; margin: 0; }
+  .sos-detail { color: var(--muted); margin: 6px 0 18px; }
+  .sos-acts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .sos-acts button, .sos-acts a { flex: 1 1 180px; font-size: 19px; padding: 16px; border-radius: 16px; font-weight: 700; text-decoration: none; display: block; }
+  .sos-acts button { background: var(--red); color: #fff; }
+  .sos-acts a { background: var(--red-pale); color: var(--red); }
+  .sos-note { color: var(--muted); font-size: 13px; margin: 12px 0 4px; }
+  .sos-hide { background: transparent; color: var(--muted); font-weight: 400; font-size: 14px; text-decoration: underline; }
+  .alert .acts button, .alert .acts a { background: #fff; color: var(--red); text-decoration: none; border-radius: 14px; padding: 10px 16px; font-weight: 700; }
+
+  .status { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; }
+  .elder-photo { width: 76px; height: 76px; border-radius: 50%; background: #efe7da; display: grid; place-items: center; font-size: 42px; }
+  .status h2 { font-size: 22px; }
+  .status .where { color: var(--muted); }
+  .posture { text-align: right; }
+  .posture strong { display: block; font-size: 30px; line-height: 1.1; }
+  .posture small { color: var(--muted); }
+  .rest { grid-column: 1 / -1; }
+  .rest .track { height: 10px; background: var(--sage-pale); border-radius: 10px; overflow: hidden; }
+  .rest .track i { display: block; height: 100%; background: var(--sage); width: 0; transition: width .5s; }
+  .rest .track i.near { background: var(--coral); }
+  .rest p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+  @media (max-width: 560px) { .status { grid-template-columns: auto 1fr; } .posture { grid-column: 1 / -1; text-align: left; } }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 18px 0; }
+  .stat .ic { font-size: 22px; }
+  .stat .n { font-size: 30px; font-weight: 700; line-height: 1.1; }
+  .stat .l { color: var(--muted); font-size: 13px; }
+  @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+  .cols { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; align-items: start; }
+  .col { display: grid; gap: 18px; min-width: 0; }
+  @media (max-width: 920px) { .cols { grid-template-columns: 1fr; } }
+
+  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
+  .game { border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .game .e { font-size: 34px; }
+  .game strong { font-size: 16px; }
+  .game p { margin: 0; font-size: 13px; color: var(--muted); flex: 1; }
+  .game .meta { font-size: 12px; color: var(--sage-dark); }
+  .game button { margin-top: 6px; }
+  .now-playing { margin-top: 14px; background: var(--sage-pale); border-radius: 14px; padding: 12px 14px; font-size: 14px; }
+
+  .msg { display: grid; grid-template-columns: 120px 1fr auto; gap: 8px; }
+  @media (max-width: 560px) { .msg { grid-template-columns: 1fr; } }
+
+  .timeline { display: grid; gap: 2px; max-height: 420px; overflow: auto; }
+  .ev { display: grid; grid-template-columns: 54px 1fr; gap: 10px; padding: 8px 4px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .ev time { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ev.bad { color: var(--red); font-weight: 600; }
+  .ev.good { color: var(--sage-dark); }
+  .empty { color: var(--muted); font-size: 14px; padding: 8px 0; }
+
+  .dev { display: grid; grid-template-columns: 1fr 120px; gap: 6px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); align-items: center; }
+  .dev:last-child { border-bottom: 0; }
+  .dev .name { font-weight: 700; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .dev .info { font-size: 13px; color: var(--muted); }
+  .dev svg { width: 120px; height: 46px; grid-row: span 2; }
+
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .seg button.on { background: var(--sage); color: #fff; }
+  .sim-acts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .sim-acts button { font-size: 14px; padding: 10px 8px; }
+  .sim-acts .fall { background: var(--red-pale); color: var(--red); }
+  .hint { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+
+  .out { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; }
+  .out .h { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-bottom: 4px; gap: 8px; }
+  .out .b { white-space: pre-wrap; }
+  .out .flex { border-left: 4px solid var(--sage); padding-left: 8px; }
+  .out .flex.red { border-color: var(--red); }
+
+  .fam { display: flex; gap: 8px; flex-wrap: wrap; }
+  .notice { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
+  .toast { position: fixed; right: 16px; bottom: 16px; background: var(--ink); color: #fff; border-radius: 14px; padding: 12px 16px; font-size: 14px; max-width: calc(100% - 32px); z-index: 20; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Care<span>ly</span></div>
+  <div class="nav-right" id="chips"></div>
+</nav>
+<main>
+  <section class="welcome">
+    <h1 id="hello">สวัสดีค่ะ 🌷</h1>
+    <p id="sub">ดูแลคนที่คุณรักจากที่ไหนก็ได้</p>
+  </section>
+
+  <section class="alerts" id="alerts" aria-live="assertive"></section>
+
+  <section class="card status">
+    <div class="elder-photo" aria-hidden="true">👵🏻</div>
+    <div><h2 id="elderName">—</h2><div class="where" id="where">กำลังเชื่อมต่อ…</div></div>
+    <div class="posture"><small>ตอนนี้</small><strong id="posture">—</strong><small id="postureFor"></small></div>
+    <div class="rest" id="rest" hidden><div class="track"><i id="restBar"></i></div><p id="restText"></p></div>
+  </section>
+
+  <section class="stats">
+    <div class="card stat"><div class="ic">🎮</div><div class="n" id="sGames">0</div><div class="l">เกมที่เล่นจบวันนี้</div></div>
+    <div class="card stat"><div class="ic">🚻</div><div class="n" id="sBath">0</div><div class="l">เข้าห้องน้ำวันนี้</div></div>
+    <div class="card stat"><div class="ic">🚨</div><div class="n" id="sAlerts">0</div><div class="l">แจ้งเตือนที่ยังเปิดอยู่</div></div>
+    <div class="card stat"><div class="ic">📡</div><div class="n" id="sSensors">0</div><div class="l">เซนเซอร์ที่ทำงานอยู่</div></div>
+  </section>
+
+  <div class="cols">
+    <div class="col">
+      <section class="card">
+        <div class="card-head"><h2>🎮 โหมดเกม</h2><button class="primary" id="aiPick">✨ ให้ AI เลือกเกม</button></div>
+        <div class="games" id="games"></div>
+        <div class="now-playing" id="nowPlaying" hidden></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>💌 ส่งข้อความให้อ่านออกเสียง</h2><span>จะดังที่หน้าจอในบ้าน</span></div>
+        <form class="msg" id="msgForm">
+          <input id="sender" placeholder="ชื่อผู้ส่ง" value="ลูก" maxlength="30" aria-label="ชื่อผู้ส่ง">
+          <input id="msgText" placeholder="เช่น กินข้าวหรือยังคะแม่ เย็นนี้หนูโทรหานะ" maxlength="300" aria-label="ข้อความ">
+          <button class="primary">ส่ง</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>🕒 ไทม์ไลน์</h2><span>ล่าสุดอยู่บน</span></div>
+        <div class="timeline" id="timeline"><div class="empty">ยังไม่มีเหตุการณ์</div></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card">
+        <div class="card-head"><h2>📡 เรดาร์ในบ้าน</h2><span>ความสูงลำตัว (ซม.)</span></div>
+        <div id="devices"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>🧪 จำลองเรดาร์</h2><span id="simState">ปิดอยู่</span></div>
+        <div class="seg" id="simRooms"></div>
+        <div class="sim-acts">
+          <button data-sim="enter">🚶 เดินเข้าห้อง</button>
+          <button data-sim="sit">🪑 นั่ง</button>
+          <button data-sim="lie">🛌 นอน</button>
+          <button data-sim="fall" class="fall">💥 ล้ม!</button>
+          <button data-sim="getup">🧍 ลุกขึ้น</button>
+          <button data-sim="wiggle">👋 ขยับ/หยุดขยับ</button>
+          <button data-sim="leave">🚪 ออกจากห้อง</button>
+          <button data-sim="stop" class="ghost">⏹ หยุดจำลอง</button>
+        </div>
+        <p class="hint" id="simHint">ใช้ทดสอบโดยไม่ต้องมีเรดาร์จริง ระบบจะทำงานเหมือนได้ข้อมูลจากเซนเซอร์</p>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>🔔 การแจ้งเตือนในหน้านี้</h2></div>
+        <p class="hint" style="margin-top:0">เมื่อตรวจพบการล้ม อยู่ในห้องน้ำนิ่งผิดปกติ หรือมีการกดขอความช่วยเหลือ หน้านี้จะขึ้นหน้าต่างสีแดงเต็มจอพร้อมเสียงเตือนจนกว่าจะมีคนกด "ฉันกำลังไป"</p>
+        <div class="bell-row"><span id="bellState"></span><button class="primary" id="bellBtn">🔔 เปิดเสียงและการแจ้งเตือน</button><button class="ghost" id="bellTest">ทดสอบเสียง</button></div>
+        <p class="hint">เบราว์เซอร์จะยอมให้มีเสียงก็ต่อเมื่อกดปุ่มนี้ 1 ครั้งหลังเปิดหน้า เปิดหน้านี้ค้างไว้ได้ แม้อยู่แท็บอื่นก็ยังมีป๊อปอัปแจ้งเตือน</p>
+      </section>
+    </div>
+  </div>
+
+  <p class="notice">ต้นแบบสำหรับสาธิต ไม่ใช่อุปกรณ์ทางการแพทย์ เรดาร์อาจประเมินผิดพลาด และไม่ควรใช้แทนการดูแลจริง ·
+    กล้อง (ถ้าเปิด) ประมวลผลในเครื่อง ไม่เก็บภาพหรือเสียง เก็บเฉพาะเหตุการณ์</p>
+</main>
+<div class="toast" id="toast" hidden></div>
+<div class="sos" id="sos" hidden role="alertdialog" aria-modal="true" aria-labelledby="sosTitle" aria-describedby="sosDetail">
+  <div class="sos-box">
+    <div class="sos-ic" aria-hidden="true">🚨</div>
+    <p class="sos-kicker">แจ้งเตือนด่วน</p>
+    <h2 id="sosTitle"></h2>
+    <p class="sos-where" id="sosWhere"></p>
+    <p class="sos-detail" id="sosDetail"></p>
+    <div class="sos-acts">
+      <button id="sosGo">🚗 ฉันกำลังไป</button>
+      <a id="sosCall" href="#">📞 โทร</a>
+    </div>
+    <p class="sos-note">กด "ฉันกำลังไป" แล้ว จอในบ้านจะบอกว่ามีคนกำลังมา</p>
+    <button class="sos-hide" id="sosHide">ซ่อนหน้าต่างนี้ (แจ้งเตือนยังเปิดอยู่)</button>
+  </div>
+</div>
+<script src="/static/dashboard.js"></script>
+</body>
+</html>

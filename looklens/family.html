@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LookLens ลูกหลาน</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%230d5f44'/><circle cx='50' cy='50' r='20' fill='%23a8f2ce'/></svg>">
+<style>
+:root{--surface:#eef5ff;--card:#fff;--container:#e1ecfa;--ink:#141c28;--ink2:#3a4656;--muted:#62707f;--line:#d3dfee;--primary:#0b3a78;--primary2:#1d63c9;--mint:#bfe0ff;--sage:#cfe3ff;--red:#ba1a1a;--red-pale:#ffdad6;--amber:#9d712c;--amber-pale:#fff3d6;--shadow:0 6px 20px rgba(16,45,100,.07)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#dce6f2}
+body{color:var(--ink);font:17px/1.55 "Plus Jakarta Sans","Noto Sans Thai",-apple-system,"Segoe UI",sans-serif}
+.sv{display:block;flex:none}
+button{font:inherit}
+.app{max-width:480px;min-height:100vh;margin:0 auto;background:var(--surface);position:relative;padding:90px 16px 110px;box-shadow:0 0 40px rgba(0,0,0,.08)}
+header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:82px;z-index:20;background:rgba(238,245,255,.92);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 1px 12px rgba(0,0,0,.04)}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#1d63c9,#3b82f6);display:grid;place-items:center;color:#fff}
+.brand b{display:block;color:var(--primary);font-size:22px;line-height:1.1;letter-spacing:-.3px}.brand small{color:var(--ink2);font-size:15px;font-weight:600}
+.top-actions{display:flex;gap:10px}
+.icon-btn{width:58px;height:58px;border-radius:50%;border:0;background:var(--container);display:grid;place-items:center;color:var(--ink2);cursor:pointer;padding:0;position:relative;overflow:visible}
+.icon-btn.avatar{background:var(--sage);color:var(--primary);overflow:hidden}
+.icon-btn:active{transform:scale(.95)}
+.icon-btn .nd{position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
+h1{font-size:36px;line-height:1.15;margin:4px 0 2px;color:var(--primary);letter-spacing:-.4px}
+.sub{color:var(--ink2);font-weight:600;font-size:15.5px;margin:0 0 18px}
+h2{font-size:22px;margin:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.inl{display:inline-flex;align-items:center;gap:6px}
+.muted{color:var(--muted)}
+.card{background:var(--card);border-radius:26px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card.flat{background:var(--container);box-shadow:none}
+.btn{border:0;border-radius:18px;padding:15px 18px;font-weight:800;font-size:18px;cursor:pointer;width:100%;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:9px;min-height:58px}
+.btn.p{background:var(--primary);color:#fff}.btn.s{background:var(--container);color:var(--primary)}.btn.r{background:var(--red);color:#fff}.btn.o{background:#fff;color:var(--red);border:3px solid var(--red)}.btn.w{background:#fff;color:var(--primary)}
+.btn.sm{width:auto;padding:11px 16px;font-size:16px;border-radius:15px;min-height:50px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.back{background:none;border:0;color:var(--primary);font-weight:800;cursor:pointer;padding:0 0 6px;font-size:17px;display:inline-flex;align-items:center;gap:2px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:5px 13px;font-size:13.5px;font-weight:800;background:var(--sage);color:#0f4aa0}
+.pill.warn{background:var(--amber-pale);color:var(--amber)}.pill.bad{background:var(--red-pale);color:var(--red)}.pill.none{background:var(--container);color:var(--muted)}
+.banner{display:flex;align-items:center;gap:10px;background:var(--amber-pale);color:#7a5a1c;border-radius:18px;padding:12px 14px;font-size:15px;font-weight:600;margin-bottom:14px}
+.banner button{margin-left:auto;background:#fff;border:0;border-radius:12px;padding:8px 12px;color:var(--primary);font-weight:800;cursor:pointer;white-space:nowrap;font-size:14.5px}
+.av{border-radius:50%;background:var(--sage);color:var(--primary);display:grid;place-items:center;overflow:hidden;flex:none}
+/* hub */
+.bubbles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0 20px}
+.bubble{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:var(--ink);padding:4px 0}
+.bubble .b{width:74px;height:74px;border-radius:26px;display:grid;place-items:center;color:#fff;box-shadow:0 8px 18px rgba(16,45,100,.16);position:relative;transition:transform .15s}
+.bubble:active .b{transform:scale(.93)}
+.bubble span.l{font-size:14.5px;font-weight:800;text-align:center;line-height:1.25}
+.b.summary{background:linear-gradient(145deg,#1d63c9,#3b82f6)}.b.workout{background:linear-gradient(145deg,#1d4ed8,#60a5fa)}.b.alerts{background:linear-gradient(145deg,#e0872e,#f8b84e)}.b.reward{background:linear-gradient(145deg,#2563eb,#93c5fd)}
+.b .dot{position:absolute;top:-3px;right:-3px;min-width:24px;height:24px;border-radius:12px;background:var(--red);color:#fff;font-size:13px;font-weight:800;display:grid;place-items:center;border:2px solid var(--surface);padding:0 5px}
+.status-card{display:flex;gap:14px;align-items:center}
+.status-card .ico{width:60px;height:60px;border-radius:50%;background:var(--sage);display:grid;place-items:center;flex:none;color:var(--primary)}
+.status-card.bad{background:var(--red-pale)}.status-card.bad .ico{background:#fff;color:var(--red)}
+.status-card h3{margin:0;font-size:19px}.status-card p{margin:2px 0 0;color:var(--ink2);font-size:15.5px}
+.pulse{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--primary2);margin-left:6px;animation:p 1.6s infinite}.pulse.off{background:#b9bfcb;animation:none}
+@keyframes p{50%{opacity:.3}}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:24px;padding:16px;box-shadow:var(--shadow)}
+.stat small{display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:700;font-size:13.5px}.stat .n{font-size:34px;font-weight:800;line-height:1.15;color:var(--primary)}.stat .u{font-size:14px;color:var(--ink2)}
+.tip{background:rgba(191,224,255,.4);border-radius:20px;padding:15px;display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.tip .ico{width:44px;height:44px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;flex:none}
+.tip b{display:block;font-size:14px;color:#0a4a9a}.tip p{margin:0;font-size:15.5px;color:var(--ink2)}
+.livecta{display:flex;align-items:center;gap:14px;border:0;border-radius:26px;padding:16px 18px;width:100%;margin-bottom:14px;cursor:pointer;text-align:left;background:linear-gradient(145deg,#1d63c9,#2b7bd8);color:#fff;min-height:88px}
+.livecta .ico{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.livecta b{display:block;font-size:20px}.livecta span{font-size:15px;opacity:.9}
+/* summary dashboard */
+.greet{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.greet .g{flex:1;min-width:0}.greet p{margin:0;color:var(--muted);font-weight:600}.greet h1{margin:0;font-size:30px}
+.hero{background:linear-gradient(160deg,#dcebff,#eaf3ff);border-radius:28px;padding:18px;margin-bottom:12px}
+.hero .big{font-size:52px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--primary)}.hero .unit{font-size:18px;color:var(--ink2);margin-left:4px}
+.hero .note{margin:8px 0 0;font-size:14.5px;color:var(--ink2)}
+.hero .bottom{margin-top:10px;align-items:flex-end}
+.mini{width:130px;height:60px;flex:none}
+.verdict{display:flex;gap:12px;border-radius:24px;padding:15px 16px;margin-bottom:12px;background:var(--card);box-shadow:var(--shadow)}
+.verdict .ico{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--sage);color:var(--primary)}
+.verdict.warn .ico{background:var(--amber-pale);color:var(--amber)}.verdict.bad .ico{background:var(--red-pale);color:var(--red)}
+.verdict b{display:block;font-size:18px}.verdict ul{margin:4px 0 0;padding-left:20px;font-size:15.5px;color:var(--ink2)}.verdict li{margin:2px 0}
+.fallcard{background:var(--red);color:#fff;border-radius:28px;padding:18px;margin-bottom:12px;box-shadow:0 10px 30px rgba(163,61,59,.28)}
+.fallcard .head{display:flex;gap:14px;align-items:center}
+.fallcard .ex{width:60px;height:60px;border-radius:50%;background:#fff;color:var(--red);display:grid;place-items:center;flex:none;animation:p 1.2s infinite}
+.fallcard h3{margin:0;font-size:23px}.fallcard p{margin:2px 0 0;opacity:.95;font-size:15.5px}
+.fallcard .acts{display:grid;gap:10px;margin-top:14px}
+.nudge{display:flex;gap:12px;align-items:center;background:var(--amber-pale);border-radius:24px;padding:15px 16px;margin-bottom:12px}
+.nudge .ico{width:48px;height:48px;border-radius:50%;background:#fff;color:var(--amber);display:grid;place-items:center;flex:none}
+.nudge b{display:block;font-size:17px}.nudge p{margin:2px 0 8px;font-size:15px;color:#6b5217}
+.arrows{display:flex;gap:8px}.arrows button{width:46px;height:46px;border-radius:50%;border:0;background:#fff;color:var(--ink2);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow)}
+.arrows button.dark{background:var(--primary);color:#fff}.arrows button:disabled{opacity:.35;cursor:default}
+.tiles{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:12px;margin:12px 0 14px}
+.tile{border-radius:26px;padding:16px;position:relative;overflow:hidden;min-width:0}
+.tile .lab{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:16px;color:var(--ink2)}
+.tile .lab .tic{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.75);display:grid;place-items:center;color:var(--primary)}
+.tile .val{font-size:36px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:8px;color:var(--ink)}.tile .val small{font-size:15px;font-weight:700;color:var(--ink2);margin-left:3px;letter-spacing:0}
+.tile .sub2{font-size:13.5px;color:var(--ink2);margin-top:4px}
+.tile.a{grid-row:span 2;background:#dbe9fb;display:flex;flex-direction:column}.tile.b{background:#e3ecfa}.tile.c{background:#d6e7f4}
+.tile .chart{margin-top:auto;padding-top:10px}.tile .chart svg{width:100%;height:auto;display:block}
+.seg{display:flex;background:var(--container);border-radius:30px;padding:4px;margin:10px 0 6px}
+.seg button{flex:1;border:0;background:none;border-radius:26px;padding:11px 4px;font-weight:800;color:var(--ink2);cursor:pointer;font-size:16px}.seg button.on{background:var(--primary);color:#fff}
+.gauge{display:block;width:100%;max-width:300px;margin:6px auto 0}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;justify-content:center;font-size:13.5px;color:var(--ink2);margin:2px 0 8px}.legend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.mchips{display:flex;gap:8px;margin:10px 0 4px;flex-wrap:wrap}
+.mchip{border:0;background:var(--container);color:var(--ink2);font-weight:800;font-size:15px;border-radius:20px;padding:9px 16px;cursor:pointer}.mchip.on{background:var(--primary);color:#fff}
+.bars{width:100%;height:auto;display:block}
+/* workout (one routine, no picking) */
+.wrow{display:flex;gap:14px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 8px;scrollbar-width:none}.wrow::-webkit-scrollbar{display:none}
+.wb{flex:none;width:96px;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:var(--ink)}
+.wb .b{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;color:#fff}
+.wb span{font-size:14px;font-weight:800;text-align:center;line-height:1.2}
+.g0{background:linear-gradient(145deg,#3b82f6,#8ec5ff)}.g1{background:linear-gradient(145deg,#38bdf8,#a5d8ff)}.g2{background:linear-gradient(145deg,#2b8fd0,#7dd3fc)}
+.progcard{background:linear-gradient(150deg,#1d63c9,#2b7bd8);color:#fff;border-radius:28px;padding:18px;margin-bottom:14px}
+.progcard h2{color:#fff}.progcard p{margin:4px 0 12px;opacity:.9;font-size:15.5px}
+.progcard .steps{display:flex;gap:8px;margin-bottom:14px}.progcard .steps div{flex:1;background:rgba(255,255,255,.14);border-radius:18px;padding:10px 4px;text-align:center;font-size:13.5px;font-weight:700}.progcard .steps svg{margin:0 auto 4px}
+.progcard .acts{display:grid;gap:10px}
+.hist-row{display:flex;gap:12px;align-items:center;padding:10px 0}.hist-row+.hist-row{border-top:1px solid var(--line)}
+.hist-row .hic{width:50px;height:50px;border-radius:50%;background:#f7cf5a;color:#fff;display:grid;place-items:center;flex:none}
+.hist-row b{display:block;font-size:17px}.hist-row small{color:var(--muted);font-size:14px}
+.idx{display:flex;gap:12px;overflow-x:auto;margin:0 -2px;padding:2px 2px 10px;scrollbar-width:none}.idx::-webkit-scrollbar{display:none}
+.idx .ic2{flex:none;width:180px;background:var(--card);border-radius:24px;padding:15px;box-shadow:var(--shadow)}
+.idx .ic2 small{color:var(--muted);font-weight:800;font-size:13.5px}.idx .ic2 .n{font-size:34px;font-weight:800;line-height:1.1;margin:2px 0}.idx .ic2 .d{font-size:13.5px;color:var(--muted)}
+.scale{position:relative;height:9px;border-radius:5px;background:linear-gradient(90deg,#7dd3fc,#38bdf8,#f7cf5a,#e0872e);margin:12px 0 6px}
+.scale i{position:absolute;top:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--ink);transform:translateX(-50%)}
+.scale-l{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+/* live */
+.livebox{position:relative;aspect-ratio:4/3;max-height:72vh;width:100%;background:#131c2b;border-radius:22px;overflow:hidden;display:grid;place-items:center;color:#cddbee;text-align:center}
+.livebox video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}.livebox:fullscreen{border-radius:0;aspect-ratio:auto;max-height:none}
+.livebox .ph{padding:20px;font-size:16px}.livebox .ph b{display:block;font-size:19px;color:#fff;margin-bottom:6px}
+.playbar{position:fixed;top:82px;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:19;display:flex;align-items:center;gap:12px;background:#1d63c9;color:#fff;padding:10px 16px;font-weight:700;font-size:16px;box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.playbar[hidden]{display:none}.playbar b{display:block;font-size:17px}.playbar small{opacity:.9;font-weight:600;font-size:14px}
+.playbar button{margin-left:auto;border:0;border-radius:14px;background:#fff;color:#0b3a78;font:inherit;font-weight:800;padding:10px 14px;cursor:pointer;min-height:46px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.playbar .pdot{width:12px;height:12px;border-radius:50%;background:#ff7a70;flex:none;animation:p 1.2s infinite}
+.livetag{position:absolute;left:12px;top:12px;background:var(--red);color:#fff;border-radius:16px;padding:4px 12px;font-size:13px;font-weight:800;z-index:2;display:flex;gap:6px;align-items:center}
+.livetag:before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:p 1.2s infinite}
+.field{width:100%;border:2px solid var(--line);border-radius:16px;padding:14px;font:inherit;background:#fff;color:var(--ink)}
+.field:focus{outline:none;border-color:var(--primary2)}
+/* notifications */
+.nchips{display:flex;gap:8px;overflow-x:auto;margin:8px 0 12px;scrollbar-width:none}.nchips::-webkit-scrollbar{display:none}
+.nchip{flex:none;border:0;background:#fff;color:var(--ink2);font-weight:800;font-size:15.5px;border-radius:22px;padding:10px 18px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.06)}.nchip.on{background:var(--primary);color:#fff}
+.nchip em{font-style:normal;margin-left:5px;background:var(--red);color:#fff;border-radius:9px;padding:0 6px;font-size:12px}
+.ngroup{font-size:14px;font-weight:800;color:var(--muted);margin:14px 4px 8px}
+.nrow{display:grid;grid-template-columns:52px 1fr;gap:12px;background:var(--card);border-radius:22px;padding:15px;margin-bottom:8px;box-shadow:var(--shadow);position:relative}
+.nic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--container);color:var(--ink2)}
+.nrow.warn .nic{background:var(--amber-pale);color:var(--amber)}.nrow.bad .nic{background:var(--red-pale);color:var(--red)}
+.ntop{display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding-right:14px}.ntop b{font-size:17.5px}.nrow.bad .ntop b{color:var(--red)}.ntop time{font-size:13.5px;color:var(--muted);white-space:nowrap}
+.nrow p{margin:2px 0 0;font-size:15px;color:var(--ink2)}
+.nrow .nacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.udot{position:absolute;top:16px;right:14px;width:10px;height:10px;border-radius:50%;background:var(--red)}
+.link{background:none;border:0;color:var(--primary);font-weight:800;cursor:pointer;font-size:16px}
+.empty{color:var(--muted);text-align:center;padding:28px 8px}
+/* reward */
+.rhero{text-align:center;background:linear-gradient(160deg,#dcecff,#eef5ff);border-radius:30px;padding:22px 16px 18px;margin-bottom:14px}
+.rhero .avb{width:112px;height:112px;margin:0 auto;border:4px solid #fff;box-shadow:var(--shadow)}
+.rhero .tierchip{display:inline-block;margin-top:-16px;position:relative;background:#fff;color:var(--primary);font-weight:800;font-size:14.5px;border-radius:20px;padding:5px 16px;box-shadow:var(--shadow)}
+.rhero h2{margin:8px 0 0;color:var(--primary)}.rhero p{margin:2px 0 12px;color:var(--ink2);font-size:15.5px}
+.rbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rbtns .btn{font-size:16px;padding:12px 8px}
+.tier{display:flex;justify-content:space-between;margin-top:14px;position:relative}
+.tier:before{content:"";position:absolute;left:12%;right:12%;top:13px;height:5px;background:var(--line);border-radius:3px}
+.tier div{text-align:center;font-size:13px;color:var(--muted);position:relative;width:25%}.tier div i{display:block;width:30px;height:30px;border-radius:50%;background:var(--line);margin:0 auto 6px;border:4px solid #fff}
+.tier div.done i{background:var(--primary2)}.tier div.cur i{background:var(--primary);box-shadow:0 0 0 4px var(--sage)}.tier div.cur{color:var(--primary);font-weight:800}
+.stampbox{background:var(--container);border-radius:18px;padding:13px 15px;margin-top:10px;font-size:16px;color:var(--ink2)}
+.rw{background:var(--card);border-radius:26px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.rw .head{display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:center}
+.rw .ric{width:60px;height:60px;border-radius:20px;background:var(--sage);display:grid;place-items:center;color:var(--primary)}.rw.locked .ric{background:var(--container);color:var(--muted)}
+.rw h3{margin:4px 0 0;font-size:20px}.rw p{margin:2px 0 0;font-size:15px;color:var(--ink2)}
+.rw .btn{margin-top:12px}
+.rw.invite{background:linear-gradient(150deg,#1d63c9,#2b7bd8);color:#fff}.rw.invite .ric{background:rgba(255,255,255,.18);color:#fff}.rw.invite p{color:#cfe3fb}
+.barcode{display:flex;gap:2px;justify-content:center;height:90px;margin:10px 0}.barcode i{display:block;background:#111;width:3px}
+/* nav & sheets */
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:20;background:rgba(238,245,255,.95);backdrop-filter:blur(14px);box-shadow:0 -8px 24px rgba(16,45,100,.07);display:flex;justify-content:space-around;align-items:center;height:84px;padding:6px 6px env(safe-area-inset-bottom)}
+nav button{background:none;border:0;flex:1;height:62px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;border-radius:20px;position:relative;margin:0 1px;transition:background .15s,color .15s}
+nav button.on{color:var(--primary);background:var(--sage)}
+nav button .nd{position:absolute;top:6px;right:calc(50% - 26px);min-width:20px;height:20px;border-radius:10px;background:var(--red);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+nav button.livedot:after{content:"";position:absolute;top:8px;right:calc(50% - 24px);width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:flex;align-items:flex-end;justify-content:center}.sheet-bg[hidden]{display:none}
+.sheet{background:var(--surface);width:100%;max-width:480px;border-radius:30px 30px 0 0;padding:22px 18px 28px;max-height:90vh;overflow:auto}
+.sheet h2{margin-bottom:12px;display:flex;align-items:center;gap:8px}.sheet label{display:block;font-size:15px;font-weight:800;color:var(--ink2);margin:14px 0 5px}
+.sheet input,.sheet select{width:100%;border:2px solid var(--line);border-radius:16px;padding:13px;font:inherit;background:#fff}
+.sheet .line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid var(--line)}
+.sheet a{color:var(--primary);font-weight:800;text-decoration:none}
+.sheet ol{margin:8px 0 0;padding-left:22px;color:var(--ink2);font-size:16px}.sheet ol li{margin:4px 0}
+.sheet .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.sheet hr{border:0;border-top:1px solid var(--line);margin:18px 0 4px}
+.photo-row{display:flex;gap:14px;align-items:center}.photo-prev{width:88px;height:88px}
+.sos{position:fixed;inset:0;z-index:250;background:rgba(120,30,28,.92);display:grid;place-items:center;padding:16px;animation:pulseBg 1.4s ease-in-out infinite}
+.sos[hidden]{display:none}
+@keyframes pulseBg{50%{background:rgba(163,61,59,.96)}}
+.sos-box{background:#fff;border-radius:30px;padding:26px 22px;width:min(480px,100%);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.sos-box .big{width:92px;height:92px;margin:0 auto;border-radius:50%;background:var(--red-pale);color:var(--red);display:grid;place-items:center}
+.sos-box h2{margin:10px 0 6px;font-size:30px;color:var(--red)}.sos-box .where{font-size:17px;font-weight:700;margin:0}
+.sos-box .btn{margin-top:12px;font-size:20px;padding:16px}
+.sos-hide{background:none;border:0;color:var(--muted);font-size:15px;text-decoration:underline;margin-top:12px;cursor:pointer}
+@media(min-width:900px){header,nav,.app,.playbar{max-width:760px}.livebox{max-height:78vh}}   /* this app runs on the PC: use the wider screen */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:104px;background:var(--ink);color:#fff;border-radius:16px;padding:14px 18px;font-size:16px;z-index:400;max-width:calc(100% - 32px)}.toast[hidden]{display:none}
+</style>
+<script>if (location.protocol === 'file:') location.replace('http://localhost:8090/' + location.pathname.split('/').pop() + location.search + location.hash);   // opened as a file: no link to the phone, so use the local server</script>
+<script src="carely-shared.js"></script>
+<link rel="stylesheet" href="looklens-glass.css">
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo" data-ic="leaf" data-s="26"></div><div><b>LookLens</b><small id="pageName">Activities</small></div></div>
+  <div class="top-actions">
+    <button class="icon-btn" id="btnSettings" type="button" aria-label="ตั้งค่า" title="ตั้งค่า"><span data-ic="settings" data-s="30"></span><span class="nd" id="soundDot" hidden></span></button>
+    <button class="icon-btn avatar" id="btnProfile" type="button" aria-label="โปรไฟล์" title="โปรไฟล์"></button>
+  </div>
+</header>
+
+<div class="playbar" id="playBar" hidden></div>
+<div class="app" id="app"></div>
+
+<nav id="nav" aria-label="เมนูหลัก">
+  <button data-go="activities" aria-label="Activities" title="Activities" data-ic="grid" data-s="32"></button>
+  <button data-go="summary" aria-label="Summary" title="Summary" data-ic="chart" data-s="32"></button>
+  <button data-go="workout" aria-label="Workout" title="Workout" data-ic="workout" data-s="32"></button>
+  <button data-go="live" aria-label="ดูสดและโทรวิดีโอ" title="ดูสดและโทรวิดีโอ" data-ic="video" data-s="32"></button>
+  <button data-go="alerts" aria-label="แจ้งเตือน" title="แจ้งเตือน" data-ic="bell" data-s="32"></button>
+  <button data-go="reward" aria-label="Reward" title="Reward" data-ic="award" data-s="32"></button>
+</nav>
+
+<div class="sheet-bg" id="sheetBg" hidden><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="photoFile" accept="image/*" hidden>
+<div class="sos" id="sos" role="alertdialog" aria-modal="true" aria-labelledby="sosTitle" hidden>
+  <div class="sos-box">
+    <div class="big" id="sosIcon"></div>
+    <h2 id="sosTitle"></h2>
+    <p class="where" id="sosWhere"></p>
+    <p id="sosDetail" style="color:var(--muted);margin:6px 0 0"></p>
+    <button class="btn r" id="sosGo" type="button"></button>
+    <a class="btn r" id="sosCallElder" href="#" data-call-elder style="background:var(--primary)"></a>
+    <a class="btn o" id="sosCall" href="tel:1669" data-call></a>
+    <button class="sos-hide" id="sosHide" type="button">ซ่อนหน้าต่างนี้ (แจ้งเตือนยังเปิดอยู่)</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ================= icons =================
+const IC = {
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/>',
+  chart: '<path d="M5 20v-7M12 20V5M19 20v-10"/>',
+  workout: '<path d="M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11"/>',
+  bell: '<path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/>',
+  award: '<circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/>',
+  settings: '<path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+  leaf: '<path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  check: '<path d="M5 12l4.5 4.5L19 7"/>',
+  checkCircle: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+  alert: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+  phone: '<path d="M5 3h4l2 5-2.5 1.5a11 11 0 006 6L16 13l5 2v4a2 2 0 01-2 2A16 16 0 013 5a2 2 0 012-2z"/>',
+  bed: '<path d="M3 19V6M3 15h18v4M21 15v-3a3 3 0 00-3-3h-7v6"/><circle cx="7" cy="11" r="1.6"/>',
+  chair: '<path d="M7 4h10v8H7zM5 12h14v3H5zM7 15v5M17 15v5"/>',
+  walk: '<circle cx="13" cy="4.5" r="2"/><path d="M12 8l-3 4 3 3v6M12 8l3 3h3M9 12l-3 2M12 15l4 2"/>',
+  wifiOff: '<path d="M2 9a15 15 0 0120 0M5 13a10 10 0 0114 0M8.5 16.5a5 5 0 017 0M12 20h.01"/>',
+  play: '<path d="M7 4l13 8-13 8z" fill="currentColor"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  camera: '<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="4"/>',
+  arrowUp: '<path d="M12 20V5M6 11l6-6 6 6"/>',
+  sparkle: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/>',
+  gamepad: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10v5M4.5 12.5h5M16 11h.01M18.5 14h.01"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  dot: '<circle cx="12" cy="12" r="3" fill="currentColor"/>',
+  volume: '<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 010 7"/>',
+  volumeOff: '<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/>',
+};
+Object.assign(IC, CARELY.ICONS);
+const ic = (n, s = 24) => `<svg class="sv" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || IC.dot}</svg>`;
+const fillIcons = root => root.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = ic(el.dataset.ic, +el.dataset.s || 24); });
+fillIcons(document);
+
+// ================= basics =================
+const GAMES = CARELY.EXERCISES, EX = CARELY.EX_BY_ID, PROGRAM = CARELY.PROGRAM, fmtDur = CARELY.fmtDur;
+const POSTURE = { sitting: 'นั่ง', standing: 'ยืน', walking: 'เดิน', low: 'นอน / อยู่ต่ำ', unknown: '—' };
+const TH_MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const hhmm = ts => new Date(ts).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+const elderName = () => CARELY.profile('elder').name;
+const sender = () => CARELY.profile('family').name;
+const phoneRaw = () => store.get('carely-phone', '');
+const phoneTel = () => phoneRaw().replace(/[^\d+]/g, '');
+const photoOf = (role, size) => CARELY.avatar(role, ic('user', size));
+function toast(t) { const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 3600); }
+const dayLabel = key => { const [y, m, d] = key.split('-').map(Number), dt = new Date(y, m - 1, d); return `${CARELY.TH_DOW[dt.getDay()]} ${d} ${TH_MONTHS[m - 1]}`; };
+const paintAvatar = () => { $('btnProfile').innerHTML = photoOf('family', 30); };
+paintAvatar();
+
+// ================= link to the home screen (same computer) =================
+const bus = CARELY.makeBus('family');
+let snap = null;
+let cctvSnap = null, cctvRx = 0, elderRx = 0;
+const cctvLive = () => !!cctvSnap && cctvSnap.running && Date.now() - cctvRx < 12000;
+let lastRx = 0, lastConnectedAt = 0;      // when a status last ARRIVED here (the phone's own clock is not trusted) / when video last worked
+const online = () => !!snap && Date.now() - Math.max(lastRx, 0) < 12000 && (lastRx > 0 || Date.now() - snap.ts < 4000);
+function readStored() { try { const s = JSON.parse(localStorage.getItem('carely-live') || 'null'); if (s && (!snap || (s.ts > snap.ts && !(s.cctv && !snap.cctv)))) snap = s; } catch {} }     // never let the phone camera's bare status replace the home screen's real data
+const summary = () => CARELY.summarize(snap, online(), store.get('carely-mode', 'auto'));
+function sendProgram() {
+  if (!online()) { toast('ยังไม่ได้เชื่อมจอในบ้าน ส่งกิจกรรมไม่ได้'); return false; }
+  if (snap.playing) { toast('ตอนนี้กำลังออกกำลังกายอยู่ ลองใหม่อีกสักครู่'); return false; }
+  bus.send({ type: 'game', game: 'program', by: sender() });
+  toast(`ส่งโปรแกรมออกกำลังกายไปที่จอในบ้านแล้ว`);
+  return true;
+}
+
+// ================= video: live view of the camera + two-way call =================
+const watchVideo = document.createElement('video'); watchVideo.autoplay = true; watchVideo.playsInline = true; watchVideo.muted = true;
+let watchDenied = false;
+const callUI = CARELY.mountCallUI({ ic, esc, local: () => rtc.localStream() });
+const rtc = CARELY.makeRtc({
+  role: 'family',
+  // watching goes to the phone camera (camera.html) whenever it is on; calls still go to the home screen
+  send: m => bus.send(m.type === 'rtc' ? { ...m, to: rtc.mode === 'watch' && cctvLive() ? 'cctv' : 'elder' } : m),
+  myName: () => sender(),
+  myPhoto: () => CARELY.profile('family').photo,
+  getCallStream: async () => { try { return await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true }); } catch { toast(window.isSecureContext ? 'เปิดกล้องหรือไมค์สำหรับโทรไม่ได้' : 'โทรวิดีโอจากมือถือต้องเปิดผ่าน https (ดูวิธีในไฟล์ make-cert.ps1)'); return null; } },
+  onIncoming: m => {
+    const name = m.name || elderName();
+    callUI.incoming(name, m.photo ? `<img src="${m.photo}" alt="">` : photoOf('elder', 80), () => { rtc.accept(); callUI.connecting(name); }, () => rtc.decline());
+    try { if ('Notification' in window && Notification.permission === 'granted') new Notification(`${name}โทรวิดีโอมา`, { requireInteraction: true }); } catch {}
+  },
+  onRemote: (s, mode) => {
+    if (mode === 'watch') { watchVideo.srcObject = s; watchVideo.play().catch(() => {}); watchDenied = false; render(); return; }
+    callUI.inCall(elderName(), () => rtc.hangup()); callUI.setRemote(s); callUI.setLocal(rtc.localStream());
+  },
+  onState: () => { redraw(); },
+  onEnd: (mode, why) => {
+    callUI.hide();
+    if (mode === 'watch') { watchVideo.srcObject = null; if (String(why).startsWith('deny')) { watchDenied = true; toast(`ดูไม่ได้ กล้องที่จอในบ้านยังไม่เปิด หรือ${elderName()}ปิดการแชร์ไว้`); } else if (why === 'timeout') toast('จอในบ้านไม่ตอบกลับ'); }
+    if (mode === 'call') { const msg = { declined: `${elderName()}ปฏิเสธสาย`, busy: 'สายไม่ว่าง', noanswer: `${elderName()}ไม่รับสาย`, missed: 'พลาดสายที่โทรเข้า' }[String(why).split(':')[0]]; if (msg) toast(msg); }
+    redraw();
+  },
+});
+function startCall() {
+  if (rtc.state !== 'idle') { toast('กำลังใช้สายอยู่'); return; }
+  if (!online()) { toast('จอในบ้านไม่ได้เปิดอยู่ โทรไม่ได้'); return; }
+  rtc.call(); callUI.outgoing(elderName(), photoOf('elder', 80), () => rtc.hangup());
+}
+let userStopped = false, lastAutoWatch = 0;     // CCTV mode: connect on its own unless you pressed "stop" yourself
+function startWatch() {
+  userStopped = false;
+  if (cctvLive()) { bus.send({ type: 'frames_req' }); redraw(); return; }    // phone camera: pictures through the server (steady); no video-link retries
+  if (rtc.state !== 'idle') return; if (!online()) { toast('จอในบ้านไม่ได้เปิดอยู่'); return; } watchDenied = false; rtc.watch(); }
+bus.on(m => {
+  if (m.type === 'state') {
+    // two senders can be online: the home screen (exercise status) and the phone camera. Status comes from the home screen; the picture from the camera.
+    if (m.snap.cctv) { cctvSnap = m.snap; cctvRx = Date.now(); if (Date.now() - elderRx > 12000) { snap = m.snap; lastRx = Date.now(); } }
+    else { snap = m.snap; lastRx = elderRx = Date.now(); }
+    if (m.snap.cctv && snap !== m.snap) { render(); return; }
+    if (m.snap.extra) { CARELY.remote = m.snap.extra; paintAvatar(); try { localStorage.setItem('carely-remote', JSON.stringify(m.snap.extra)); } catch {} }
+    try { const { extra, ...rest } = m.snap; localStorage.setItem('carely-live', JSON.stringify(rest)); } catch {}   // lets summary.html (same address, this PC) read what the phone sends
+    render();
+  }
+  else if (m.type === '_pair') { render(); if (!sessionStorage.getItem('carely-pair-asked')) { sessionStorage.setItem('carely-pair-asked', '1'); showPairing(m); } }
+  else if (m.type === '_relay') bus.send({ type: 'hello' });      // (re)connected to the server: ask the home screen for a fresh status
+  else if (m.type === 'frame') { if (m.img && !userStopped) { frameImg.src = m.img; lastFrame = Date.now(); attachFrame(); } }
+  else if (m.type === 'busy') toast('กำลังออกกำลังกายอยู่ ลองใหม่อีกสักครู่');
+  else if (m.type === 'rtc') rtc.handle(m);
+  else if (m.type === 'exercise') onExercise(m);
+});
+// push a notice the moment the elder starts / finishes exercising
+function onExercise(m) {
+  if (m.phase === 'step') return;                       // the banner already shows progress
+  const n = elderName();
+  const text = m.phase === 'start' ? `${n}เริ่มออกกำลังกายแล้ว` : m.phase === 'done' ? `${n}ออกกำลังกายจบแล้ว${m.score != null ? ` ทำท่าได้ ${m.score}%` : ''}` : `${n}หยุดออกกำลังกายกลางคัน`;
+  toast(text);
+  try { navigator.vibrate?.(m.phase === 'start' ? [200, 100, 200] : [150]); } catch {}
+  if ('Notification' in window && Notification.permission === 'granted' && document.hidden) { try { new Notification(text, { body: m.phase === 'start' ? 'เปิดแอปเพื่อดูสด' : '', tag: 'carely-exercise' }); } catch {} }
+  if (bellReady()) { try { const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t0 = audioCtx.currentTime; o.frequency.value = 880; g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(.18, t0 + .02); g.gain.exponentialRampToValueAtTime(.0001, t0 + .4); o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0 + .42); } catch {} }
+  redraw();
+}
+
+// ================= views =================
+const VIEWS = ['activities', 'workout', 'live', 'alerts', 'reward'];
+let view = (location.hash || '#activities').slice(1);
+if (view === 'summary') location.replace('summary.html');       // Summary is its own page now
+if (!VIEWS.includes(view)) view = 'activities';
+const NAMES = { activities: 'Activities', workout: 'Workout', live: 'ดูสด', alerts: 'แจ้งเตือน', reward: 'Reward' };
+let dayIdx = 0, period = 'day', metric = 'bath', nFilter = 'all', showAllHist = false;
+
+function modeBanner(S) {
+  if (S.mode !== 'sample') return '';
+  return `<div class="banner">${ic('info', 20)}<span>กำลังแสดงข้อมูลตัวอย่าง (ยังไม่มีข้อมูลจริง)</span><button data-mode="live" type="button">ใช้ข้อมูลจริง</button></div>`;
+}
+const seenTs = () => +store.get('carely-alerts-seen', 0);
+function unreadCount() { const S = summary(); return S.notifs.filter(n => n.level && n.ts > seenTs()).length; }
+const callElderBtn = (cls = 'r') => phoneTel()
+  ? `<a class="btn ${cls}" href="tel:${phoneTel()}" data-call-elder>${ic('phone', 22)}โทรหา${esc(elderName())} · ${esc(phoneRaw())}</a>`
+  : `<button class="btn ${cls}" data-setphone type="button">${ic('contact', 22)}ตั้งเบอร์โทร${esc(elderName())}</button>`;
+const playingText = s => s.playing ? `${s.playing.current || s.playing.title}${s.playing.n > 1 ? ` · ท่า ${s.playing.i}/${s.playing.n}` : ''}` : '';
+
+// ---------- hub ----------
+function vActivities() {
+  const S = summary(), d = S.today, ev = CARELY.evaluate(d, S.normal, CARELY.sitLimit()), n = unreadCount(), s = snap || {};
+  const live = online() && s.alert && s.alert.status !== 'resolved';
+  let status;
+  if (live) status = `<div class="card status-card bad"><div class="ico">${ic('alert', 30)}</div><div><h3>${esc(elderName())}${s.alert.kind === 'fall' ? 'อาจล้ม' : 'ขอความช่วยเหลือ'}</h3><p>${hhmm(s.alert.ts)} น. · เปิดแจ้งเตือนเพื่อดูและโทร 1669</p></div></div>`;
+  else if (S.mode === 'sample') status = `<div class="card status-card"><div class="ico">${ic('info', 30)}</div><div><h3>ข้อมูลตัวอย่าง</h3><p>ยังไม่ได้เชื่อมจอในบ้าน กดแต่ละหมวดเพื่อดูตัวอย่างหน้าจอ</p></div></div>`;
+  else status = `<div class="card status-card"><div class="ico">${ic(ev.level === 'ok' ? 'checkCircle' : 'alert', 30)}</div><div><h3>${ev.level === 'ok' ? 'วันนี้ปกติ' : ev.level === 'warn' ? 'วันนี้ควรจับตา' : 'มีเหตุฉุกเฉิน'} <span class="pulse${online() ? '' : ' off'}"></span></h3><p>${ev.reasons[0] ? esc(ev.reasons[0]) : online() ? 'ไม่พบเรื่องที่ต้องกังวล' : 'จอในบ้านไม่ได้เปิด · แสดงข้อมูลที่บันทึกไว้'}</p></div></div>`;
+  const playingCta = online() && s.cctv
+    ? `<button class="livecta" data-golive type="button" style="background:linear-gradient(145deg,#b3261e,#d9534f)"><div class="ico">${ic('camera', 30)}</div><div><b>กล้องวงจรปิด (มือถือ)</b><span>${s.running ? 'กำลังส่งภาพ · แตะเพื่อดูสด' : 'ยังไม่เปิดกล้องที่มือถือ'}</span></div></button>`
+    : online() && s.playing
+    ?`<button class="livecta" data-golive type="button" style="background:linear-gradient(145deg,#b3261e,#d9534f)"><div class="ico">${ic('eye', 30)}</div><div><b>${esc(elderName())}กำลังออกกำลังกาย</b><span>${esc(playingText(s))} · แตะเพื่อดูสด</span></div></button>`
+    : `<button class="livecta" data-go="live" type="button"><div class="ico">${ic('video', 30)}</div><div><b>ดูสด · โทรวิดีโอ · ส่งข้อความ</b><span>ติดต่อ${esc(elderName())}ได้ทันที</span></div></button>`;
+  return `<h1>Activities</h1><p class="sub">ภาพรวมสุขภาพและการเคลื่อนไหวของ${esc(elderName())}</p>
+  <div class="row"><h2>หมวดหมู่</h2><span class="inl" style="color:var(--primary);font-weight:800;font-size:15px">${online() ? ic('shield', 20) + 'เชื่อมต่อแล้ว' : ic('wifiOff', 20) + 'ยังไม่เชื่อมต่อ'}</span></div>
+  <div class="bubbles">
+    <button class="bubble" data-go="summary"><div class="b summary">${ic('chart', 36)}</div><span class="l">Summary</span></button>
+    <button class="bubble" data-go="workout"><div class="b workout">${ic('workout', 36)}</div><span class="l">Workout</span></button>
+    <button class="bubble" data-go="alerts"><div class="b alerts">${ic('bell', 36)}${n ? `<span class="dot">${n}</span>` : ''}</div><span class="l">แจ้งเตือน</span></button>
+    <button class="bubble" data-go="reward"><div class="b reward">${ic('award', 36)}</div><span class="l">Reward</span></button>
+  </div>
+  ${status}${playingCta}
+  <div class="stats"><div class="stat"><small>${ic('droplet', 18)}ห้องน้ำวันนี้</small><div class="n">${d.bathroom ?? '–'}</div><div class="u">ครั้ง</div></div>
+  <div class="stat"><small>${ic('up', 18)}ลุกยืนวันนี้</small><div class="n">${d.standUps}</div><div class="u">ครั้ง</div></div></div>
+  <div class="tip"><div class="ico">${ic('leaf', 22)}</div><div><b>เคล็ดลับวันนี้</b><p>ลุกยืนยืดตัวทุก 1 ชั่วโมง ช่วยให้ขาและสะโพกแข็งแรง</p></div></div>`;
+}
+
+// ---------- workout: one routine, no picking exercises ----------
+function histItems(S) { return S.days.flatMap(d => (d.workouts || []).map(w => ({ ...w, key: d.key }))).sort((a, b) => b.ts - a.ts); }
+function vWorkout() {
+  const S = summary(), hist = histItems(S), today = S.today, s = snap || {};
+  const todayMin = (today.workouts || []).reduce((a, w) => a + (w.min || 0), 0), kinds = new Set((today.workouts || []).map(w => w.id)).size;
+  let streak = 0; for (const d of S.days) { if ((d.workouts || []).length) streak++; else if (d !== S.days[0]) break; }
+  const scale = (v, max) => `<div class="scale"><i style="left:${Math.min(98, Math.max(2, 100 * v / max))}%"></i></div><div class="scale-l"><span>น้อย</span><span>ดีมาก</span></div>`;
+  return `${modeBanner(S)}<h1>Workout</h1><p class="sub">โปรแกรมออกกำลังกายในบ้านสำหรับ${esc(elderName())}</p>
+  <div class="progcard"><div class="row"><h2>${esc(PROGRAM.title)}</h2><span class="pill" style="background:rgba(255,255,255,.2);color:#fff">${esc(PROGRAM.amount)} · ~${PROGRAM.minutes} นาที</span></div><p>${esc(PROGRAM.desc)}</p>
+    <div class="steps">${PROGRAM.ids.map(id => `<div>${ic(EX[id].icon, 40)}${esc(EX[id].title)}<br><small style="opacity:.85">${esc(EX[id].amount)}</small></div>`).join('')}</div>
+    ${online() && s.playing ? `<div class="acts"><button class="btn w" data-golive type="button">${ic('eye', 22)}กำลังเล่น ${esc(playingText(s))} · ดูสด</button></div>`
+      : `<div class="acts"><button class="btn w" data-sendprog type="button">${ic('send', 22)}ส่งให้${esc(elderName())}เล่น</button><a class="btn s" href="index.html?game=program" target="_blank" rel="noopener" style="background:rgba(255,255,255,.18);color:#fff">${ic('play', 22)}เริ่มที่จอในบ้านเครื่องนี้</a></div>`}</div>
+  <div class="wrow">${PROGRAM.ids.map((id, i) => `<button class="wb" data-ex="${id}" type="button"><div class="b g${i % 3}">${ic(EX[id].icon, 42)}</div><span>${esc(EX[id].title)}</span></button>`).join('')}</div>
+  <div class="card"><div class="row"><h2>ประวัติ</h2><button class="link" data-allhist type="button">${showAllHist ? 'ย่อ' : 'ทั้งหมด'} ›</button></div>
+    ${hist.length ? (showAllHist ? hist : hist.slice(0, 3)).map(w => `<div class="hist-row"><div class="hic">${ic((EX[w.id] || {}).icon || 'workout', 28)}</div><div><b>${esc(w.title)}</b><small>${w.min || 1} นาที${w.score != null ? ` · ทำท่าได้ ${w.score}%` : ''} · ${dayLabel(w.key)} ${hhmm(w.ts)}</small></div></div>`).join('') : '<div class="empty">ยังไม่มีประวัติ</div>'}</div>
+  <div class="row" style="margin:4px 0 8px"><h2>ตัวชี้วัดการออกกำลังกาย</h2></div>
+  <div class="idx">
+    <div class="ic2"><small>เวลาวันนี้</small><div class="n">${todayMin}<small> นาที</small></div>${scale(todayMin, 30)}<div class="d">เป้าหมาย 5 นาที</div></div>
+    <div class="ic2"><small>ท่าที่ทำวันนี้</small><div class="n">${kinds}<small> ท่า</small></div>${scale(kinds, 4)}<div class="d">เป้าหมาย 3 ท่า</div></div>
+    <div class="ic2"><small>ต่อเนื่อง</small><div class="n">${streak}<small> วัน</small></div>${scale(streak, 7)}<div class="d">ออกกำลังกายติดกัน</div></div>
+  </div>
+  <div class="tip"><div class="ico">${ic('shield', 22)}</div><div><b>เตือนความปลอดภัย</b><p>วางเก้าอี้ที่มั่นคงไว้ข้างๆ พักเมื่อเหนื่อย และหยุดทันทีถ้าเวียนหัวหรือเจ็บ</p></div></div>`;
+}
+function openExercise(id) {
+  const g = EX[id];
+  openSheet(`<h2>${ic(g.icon, 34)}${esc(g.title)}</h2><p style="margin:0 0 6px;color:var(--ink2)">${esc(g.desc)}</p>
+    <div class="row" style="justify-content:flex-start;gap:8px;margin:8px 0"><span class="pill">${esc(g.amount)}</span><span class="pill none">${g.minutes} นาที</span>${g.seated ? '<span class="pill none">นั่งทำได้</span>' : ''}</div>
+    <label>ขั้นตอน</label><ol>${g.steps.map(s => `<li>${esc(s.say)}</li>`).join('')}</ol>
+    <div class="two"><button class="btn s" id="xClose" type="button">ปิด</button><button class="btn p" id="xSend" type="button">${ic('send', 20)}ส่งโปรแกรม</button></div>`);
+  $('xClose').onclick = closeSheet; $('xSend').onclick = () => { if (sendProgram()) closeSheet(); };
+}
+
+// ---------- live: watch + call + message ----------
+function vLive() {
+  const s = snap || {}, on = online(), watching = rtc.mode === 'watch' && rtc.state !== 'idle', calling = rtc.mode === 'call' && rtc.state !== 'idle', name = esc(elderName());
+  const cctv = cctvLive();                                    // the phone is used as a plain camera (camera.html): pictures come through the server, one steady path
+  const frameFresh = cctv && !userStopped && Date.now() - lastFrame < 8000;
+  const viewing = cctv ? !userStopped : watching;
+  const connected = cctv ? frameFresh : (watching && rtc.state === 'connected');
+  const hasCam = cctv || (on && s.running);
+  const camOn = cctv || (on && s.running);
+  const stateText = cctv ? (s.playing ? `กำลังเล่น: ${playingText(s)}` : 'ภาพจากกล้องมือถือ') : !on ? `ยังไม่ได้เชื่อมกับมือถือ · เปิดหน้า camera.html บนมือถือแล้วกด “เริ่มส่งภาพ”` : !s.running ? 'กล้องที่จอในบ้านยังไม่เปิด' : s.playing ? `กำลังเล่น: ${playingText(s)}` : 'กล้องเปิดอยู่';
+  const ctrl = viewing ? `<button class="btn r" data-unwatch type="button">${ic('close', 22)}หยุดดู</button>`
+    : hasCam ? `<button class="btn p" data-watch type="button">${ic('eye', 22)}ดูสด</button>`
+    : on ? `<button class="btn p" data-camreq type="button">${ic('camera', 22)}ขอให้เปิดกล้อง</button>` : `<button class="btn p" disabled type="button">${ic('eye', 22)}ดูสด</button>`;
+  const cctvHead = cctv ? `<h1>กล้องวงจรปิด</h1><p class="sub">ภาพจากกล้องมือถือ แบบเรียลไทม์ · ต่อให้อัตโนมัติเมื่อมือถือเริ่มส่งภาพ</p>` : '';
+  return `${cctvHead || `<h1>ดูสด</h1><p class="sub">ดู${name}ออกกำลังกายแบบเรียลไทม์ โทรวิดีโอ และส่งข้อความ</p>`}
+  <div class="card"><div class="livebox" id="liveSlot">${connected ? '<span class="livetag">LIVE</span>' : ''}<div class="ph" id="livePh" ${connected ? 'hidden' : ''}><b>${viewing ? 'กำลังเชื่อมต่อ…' : 'หยุดดูอยู่ · กด “ดูสด” เพื่อดูต่อ'}</b>${esc(stateText)}${watchDenied && !viewing ? '<br>ดูไม่ได้ในตอนนี้' : ''}</div></div>
+    <div class="row" style="margin:10px 0 12px;justify-content:flex-start;gap:8px"><span class="pill ${camOn ? '' : 'none'}">${camOn ? 'กล้องเปิดอยู่' : 'กล้องปิด'}</span>${on && s.playing ? `<span class="pill warn">${esc(playingText(s))}</span>` : ''}${viewing ? '<span class="pill">แจ้ง' + name + 'ให้ทราบแล้ว</span>' : ''}</div>
+    ${ctrl}${viewing ? `<button class="btn s" data-blur type="button" style="margin-top:10px">${ic('shield', 22)}${blurOn ? 'แสดงภาพชัด' : 'เบลอภาพเพื่อความเป็นส่วนตัว'}</button>` : ''}${connected ? `<button class="btn s" data-full type="button" style="margin-top:10px">${ic('eye', 22)}ดูเต็มจอ</button>` : ''}</div>
+  ${cctv ? '' : `<button class="livecta" data-call type="button" style="background:linear-gradient(145deg,#1d63c9,#2b7bd8)" ${calling ? 'disabled' : ''}><div class="ico">${ic('video', 30)}</div><div><b>${calling ? 'กำลังใช้สายอยู่' : `โทรวิดีโอหา${name}`}</b><span>เห็นหน้าและคุยกันได้ทันที</span></div></button>
+  <div class="row" style="margin:14px 0 10px"><h2>ข้อความอ่านออกเสียง</h2><span class="muted" style="font-size:14px">ดังที่จอในบ้าน</span></div>
+  <form class="card" id="msgForm"><input class="field" id="msgText" placeholder="เช่น กินข้าวหรือยังคะแม่ เย็นนี้หนูโทรหานะ" maxlength="300" aria-label="ข้อความ">
+    <div class="row" style="margin-top:12px"><span style="font-size:14px;color:var(--muted)">ส่งในชื่อ “${esc(sender())}”</span><button class="btn p" style="width:auto;padding:13px 24px" type="submit">${ic('mail', 20)}ส่ง</button></div></form>`}
+  <div class="card flat" style="font-size:14px;color:var(--ink2)">ภาพสดส่งตรงจากมือถือมาที่หน้านี้ (ผ่านเครือข่ายเดียวกัน) มือถือจะมีแถบแจ้งทุกครั้งที่มีคนดูอยู่ ถ้าภาพหลุดจะเชื่อมต่อใหม่ให้เอง</div>`;
+}
+// fallback picture: if the direct video link (WebRTC) cannot connect, the phone sends still pictures through the server
+const frameImg = document.createElement('img'); frameImg.alt = ''; frameImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000';
+let lastFrame = 0;
+// privacy blur (like Kami's blurred footage): the picture stays hidden behind a blur until you choose to show it
+let blurOn = store.get('carely-blur', '1') === '1';
+function applyBlur() { const f = blurOn ? 'blur(18px)' : ''; frameImg.style.filter = f; watchVideo.style.filter = f; }
+setInterval(() => { if (view === 'live' && cctvLive() && !userStopped) bus.send({ type: 'frames_req' }); }, 2000);
+function attachFrame() {
+  const slot = $('liveSlot'); if (!slot) return;
+  if (rtc.state === 'connected') lastConnectedAt = Date.now();
+  const use = !userStopped && cctvLive() && Date.now() - lastFrame < 8000;
+  if (use) { if (frameImg.parentNode !== slot) slot.insertBefore(frameImg, slot.firstChild); const ph = $('livePh'); if (ph) ph.hidden = true; }
+  else if (frameImg.parentNode) frameImg.remove();
+}
+function attachWatch() {
+  const slot = $('liveSlot'); if (!slot) return;
+  applyBlur(); attachFrame();
+  if (watchVideo.srcObject) { watchVideo.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain'; if (watchVideo.parentNode !== slot) { slot.insertBefore(watchVideo, slot.firstChild); watchVideo.play().catch(() => {}); } const ph = $('livePh'); if (ph && rtc.state === 'connected') ph.hidden = true; }
+}
+function sendMessage(e) {
+  e.preventDefault();
+  const text = $('msgText').value.trim();
+  if (!text) return;
+  if (!online()) { toast('จอในบ้านไม่ได้เปิดอยู่ ส่งข้อความไม่ได้'); return; }
+  bus.send({ type: 'message', text, by: sender() });
+  $('msgText').value = ''; toast('ส่งข้อความแล้ว จะอ่านออกเสียงที่บ้าน');
+}
+
+// ---------- notifications (list style) ----------
+const NTYPE = n => n.level ? 'important' : (['message', 'ack', 'ok', 'game_offer'].includes(n.kind) ? 'message' : 'activity');
+// ---------- emergency log (auditable): when it was raised, how fast it reached here, who answered and how fast ----------
+const auditLoad = () => { try { return JSON.parse(store.get('carely-audit', '[]')); } catch { return []; } };
+function auditSave(list) { store.set('carely-audit', JSON.stringify(list.slice(0, 30))); }
+function trackAlert() {
+  const a = online() && snap && snap.alert;
+  if (!a) return;
+  const list = auditLoad(); let r = list.find(x => x.id === a.id), dirty = false;
+  if (!r) {
+    const lat = Date.now() - a.ts;                      // only trusted when the two clocks agree (home screen on this PC); otherwise left out
+    r = { id: a.id, kind: a.kind, ts: a.ts, seenAt: Date.now(), latency: lat >= 0 && lat < 30000 ? lat : null };
+    list.unshift(r); dirty = true;
+  }
+  if (a.status === 'acked' && !r.ackAt) { r.ackAt = Date.now(); r.by = a.by || ''; dirty = true; }
+  if (a.status === 'resolved' && !r.resolvedAt) { r.resolvedAt = Date.now(); dirty = true; }
+  if (dirty) auditSave(list);
+}
+const secTxt = ms => ms < 90000 ? `${Math.max(1, Math.round(ms / 1000))} วินาที` : `${Math.round(ms / 60000)} นาที`;
+function auditCard() {
+  const list = auditLoad().slice(0, 5);
+  if (!list.length) return '';
+  const row = r => `<div style="padding:10px 0;border-top:1px solid var(--line)"><b>${r.kind === 'fall' ? 'อาจล้ม' : 'กดเรียกลูกหลาน'}</b> <span class="muted">${hhmm(r.ts)} น.</span>
+    <div style="font-size:14px;color:var(--ink2)">${r.latency != null ? `แจ้งถึงที่นี่ใน ${secTxt(r.latency)} · ` : ''}${r.ackAt ? `${esc(r.by || 'มีคน')}รับทราบใน ${secTxt(r.ackAt - r.seenAt)}` : '<b style="color:var(--red)">ยังไม่มีใครรับทราบ</b>'}${r.resolvedAt ? ' · ท่านแจ้งว่าปลอดภัยแล้ว' : ''}</div></div>`;
+  return `<div class="card"><div class="row" style="margin:0 0 4px"><h2>บันทึกเหตุการณ์ฉุกเฉิน</h2><span class="muted" style="font-size:13px">ล่าสุด ${list.length}</span></div>${list.map(row).join('')}</div>`;
+}
+function insightCard(S) {
+  const list = CARELY.insights ? CARELY.insights(S.days) : [];
+  if (!list.length) return '';
+  return `<div class="card"><h2 style="margin:0 0 6px">สัญญาณวันนี้</h2>${list.map(i => `<p style="margin:6px 0;display:flex;gap:8px;align-items:flex-start;color:${i.level === 'warn' ? 'var(--amber)' : 'var(--ink2)'}">${ic(i.level === 'warn' ? 'alert' : 'check', 20)}<span>${esc(i.text)}</span></p>`).join('')}<small class="muted">เทียบกับค่าเฉลี่ยของท่านเอง ไม่ใช่การวินิจฉัยทางการแพทย์</small></div>`;
+}
+function vAlerts() {
+  const S = summary(), all = [...S.notifs].sort((a, b) => b.ts - a.ts), seen = seenTs(), s = snap || {};
+  const filtered = all.filter(n => nFilter === 'all' || NTYPE(n) === nFilter);
+  const un = all.filter(n => n.level && n.ts > seen).length;
+  const live = online() && s.alert && s.alert.status !== 'resolved';
+  const top = live ? `<div class="fallcard"><div class="head"><div class="ex">${ic('alert', 34)}</div><div><h3>${esc(elderName())}${s.alert.kind === 'fall' ? 'อาจล้ม' : 'ขอความช่วยเหลือ'}</h3><p>${hhmm(s.alert.ts)} น. ${s.alert.status === 'acked' ? '· ' + esc(s.alert.by) + ' กำลังไป' : '· ยังไม่มีคนรับทราบ'}</p></div></div><div class="acts">${callElderBtn('w')}<a class="btn o" href="tel:1669" data-call style="border-color:#fff;background:transparent;color:#fff">${ic('phone', 22)}โทร 1669</a></div></div>` : '';
+  const row = n => `<div class="nrow ${n.level}"><div class="nic">${ic(n.icon, 26)}</div><div><div class="ntop"><b>${esc(n.title)}</b><time>${hhmm(n.ts)} น.</time></div>${n.desc ? `<p>${esc(n.desc)}</p>` : ''}
+    ${n.action === 'call' ? `<div class="nacts">${phoneTel() ? `<a class="btn r sm" href="tel:${phoneTel()}" data-call-elder>${ic('phone', 20)}โทรหา${esc(elderName())}</a>` : `<button class="btn r sm" data-setphone type="button">${ic('contact', 20)}ตั้งเบอร์โทรท่าน</button>`}<a class="btn o sm" href="tel:1669" data-call>${ic('phone', 20)}1669</a></div>` : ''}
+    ${n.action === 'send' ? `<div class="nacts"><button class="btn p sm" data-sendprog type="button">${ic('send', 20)}ส่งกิจกรรมให้ท่านเลย</button></div>` : ''}</div>${n.level && n.ts > seen ? '<span class="udot"></span>' : ''}</div>`;
+  return `${modeBanner(S)}<div class="row"><h1>แจ้งเตือน</h1><button class="link" id="markRead" type="button">อ่านทั้งหมด</button></div><p class="sub">เหตุการณ์ของ${esc(elderName())}วันนี้</p>${top}${insightCard(S)}${auditCard()}
+  <div class="nchips">${[['all', 'ทั้งหมด', 0], ['important', 'สำคัญ', un], ['activity', 'กิจกรรม', 0], ['message', 'ข้อความ', 0]].map(([k, l, c]) => `<button class="nchip ${nFilter === k ? 'on' : ''}" data-nf="${k}" type="button">${l}${c ? `<em>${c}</em>` : ''}</button>`).join('')}</div>
+  ${filtered.length ? `<div class="ngroup">วันนี้</div>${filtered.map(row).join('')}` : `<div class="empty">${online() || S.mode === 'sample' ? 'ยังไม่มีเหตุการณ์ในหมวดนี้' : 'ยังไม่ได้รับข้อมูลจากจอในบ้าน'}</div>`}`;
+}
+
+// ---------- reward ----------
+const TIERS = [['Starter', 0], ['Champ', 20], ['Star', 50], ['Legend', 100]];
+const claimed = () => { try { return JSON.parse(store.get('carely-claimed', '[]')); } catch { return []; } };
+function vReward() {
+  const S = summary(), stamps = S.stamps, tier = TIERS.reduce((a, t, i) => stamps >= t[1] ? i : a, 0), next = TIERS[tier + 1], got = claimed();
+  const rewards = [
+    { id: 'tea', icon: 'coffee', title: 'ชาสมุนไพรฟรี', desc: 'ได้จากการทำท่าออกกำลังกายสะสม 15 ครั้ง', need: 15 },
+    { id: 'pharmacy', icon: 'pill', title: 'ส่วนลดร้านขายยา 10%', desc: 'ปลดล็อกที่ระดับ Champ ใช้กับอาหารเสริมและยาสามัญ', need: 20 },
+  ];
+  const card = r => {
+    const ok = stamps >= r.need, have = got.includes(r.id);
+    return `<div class="rw ${ok ? '' : 'locked'}"><div class="head"><div class="ric">${ic(ok ? r.icon : 'lock', 30)}</div><div><span class="pill ${ok ? '' : 'none'}">${have ? 'รับแล้ว' : ok ? 'พร้อมรับ' : `ต้องการ ${r.need} แสตมป์`}</span><h3>${r.title}</h3><p>${r.desc}</p></div></div>
+      ${have ? `<button class="btn s" data-barcode="${r.id}" type="button">${ic('ticket', 22)}ดูบาร์โค้ด</button>` : ok ? `<button class="btn p" data-claim="${r.id}" type="button">${ic('gift', 22)}รับรางวัล</button>` : `<button class="btn s" disabled type="button">${ic('lock', 22)}ยังไม่ปลดล็อก</button>`}</div>`;
+  };
+  return `${modeBanner(S)}<h1>Reward</h1><p class="sub">ของรางวัลจากการขยับร่างกาย</p>
+  <div class="rhero"><div class="av avb">${photoOf('elder', 58)}</div><span class="tierchip">Active ${TIERS[tier][0]}</span><h2>${esc(elderName())}</h2><p>${stamps} แสตมป์สุขภาพ · ใช้งาน ${S.days.filter(d => d.workouts.length).length} วัน</p>
+    <div class="rbtns"><button class="btn w" data-rewardgo type="button">${ic('ticket', 22)}แลกรางวัล</button><button class="btn w" data-rhist type="button">${ic('history', 22)}ประวัติรางวัล</button></div></div>
+  <div class="card"><div class="row"><div><small class="muted" style="font-weight:800">ระดับปัจจุบัน</small><h2 style="margin-top:2px">คุณคือ ${TIERS[tier][0]}</h2></div><span class="pill" style="background:var(--primary);color:#fff">ระดับ</span></div>
+    <div class="stampbox">คุณมี <b>${stamps} แสตมป์สุขภาพ</b><br>${next ? `อีก <b>${next[1] - stamps}</b> แสตมป์ เพื่อปลดล็อกระดับ ${next[0]}` : 'ถึงระดับสูงสุดแล้ว'}</div>
+    <div class="tier">${TIERS.map((t, i) => `<div class="${i < tier ? 'done' : i === tier ? 'cur' : ''}"><i></i>${t[0]}<br>${t[1]}${TIERS[i + 1] ? '–' + (TIERS[i + 1][1] - 1) : '+'}</div>`).join('')}</div>
+    <p class="muted" style="margin:14px 0 0;font-size:14px;display:flex;gap:6px;align-items:center">${ic('calendar', 18)}แสตมป์ใช้ได้ถึง 31/12/${new Date().getFullYear()}</p></div>
+  <div class="row" id="rewards" style="margin:4px 0 10px"><div><h2>รางวัลประจำเดือน</h2><span class="muted" style="font-size:14px">คัดมาให้เหมาะกับการขยับเบาๆ ทุกวัน</span></div></div>
+  ${rewards.map(card).join('')}
+  <div class="rw invite"><div class="head"><div class="ric">${ic('users', 30)}</div><div><span class="pill" style="background:rgba(255,255,255,.2);color:#fff">+5 แสตมป์โบนัส</span><h3>ชวนเพื่อนเดินเล่น</h3><p>ชวนเพื่อนวัยเดียวกันหรือญาติมาใช้ LookLens ร่วมกัน</p></div></div><button class="btn w" data-invite type="button">${ic('share', 22)}แชร์ลิงก์เชิญ</button></div>
+  <div class="card flat" style="font-size:14px;color:var(--ink2);display:flex;gap:10px;align-items:flex-start">${ic('shield', 22)}<span>แสตมป์และรางวัลไม่ต้องใช้การเดินเร็วหรือออกแรงหนัก ขยับเบาๆ ก็นับ รางวัลในหน้านี้เป็นตัวอย่างสำหรับสาธิต</span></div>`;
+}
+
+// ================= private pairing (this PC is trusted; one Android phone pairs once with a 6-digit code) =================
+const pairBanner = () => bus.needPair ? `<div class="banner" style="background:#ffe9e6;color:#8a2a22">${ic('lock', 20)}<span>ยังไม่ได้จับคู่กับคอมเครื่องนี้</span><button data-pair type="button">จับคู่</button></div>` : '';
+function showPairing(m) {
+  const full = m && m.open === false;
+  openSheet(`<h2>${ic('lock', 28)}จับคู่แบบส่วนตัว</h2>
+    ${full ? `<p style="margin:0;font-size:17px">คอมเครื่องนี้จับคู่กับโทรศัพท์ไว้แล้ว 1 เครื่อง เครื่องอื่นเข้าไม่ได้ ถ้าจะเปลี่ยนมือถือ ให้รัน <b>py server.py --reset-pairing</b> บนคอม</p><button class="btn s" id="pinClose" type="button" style="margin-top:14px">ปิด</button>`
+    : `<p style="margin:0 0 6px;color:var(--ink2)">ใส่รหัส 6 หลักที่แสดงในหน้าต่างสีดำของโปรแกรม LookLens บนคอม (ทำครั้งเดียว) ใช้ได้เฉพาะโทรศัพท์แอนดรอย 1 เครื่อง</p>
+    <input class="field" id="pinIn" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="รหัส 6 หลัก" style="font-size:28px;letter-spacing:.3em;text-align:center">
+    <p id="pinMsg" style="margin:8px 0 0;color:var(--red);font-weight:700;min-height:24px"></p>
+    <div class="two"><button class="btn s" id="pinClose" type="button">ไว้ทีหลัง</button><button class="btn p" id="pinGo" type="button">จับคู่</button></div>`}`);
+  $('pinClose').onclick = closeSheet;
+  if (full) return;
+  const go = async () => {
+    const r = await bus.pair($('pinIn').value);
+    if (r.ok) { closeSheet(); toast('จับคู่สำเร็จ'); redraw(); return; }
+    $('pinMsg').textContent = { 'wrong-pin': 'รหัสไม่ถูกต้อง', 'android-only': 'จับคู่ได้เฉพาะโทรศัพท์แอนดรอย', full: 'จับคู่ครบแล้ว', locked: `ลองผิดหลายครั้ง รออีก ${r.wait || 60} วินาที`, network: 'ติดต่อคอมไม่ได้ ตรวจว่าอยู่ Wi-Fi เดียวกัน' }[r.error] || 'จับคู่ไม่สำเร็จ';
+  };
+  $('pinGo').onclick = go; $('pinIn').onkeydown = e => { if (e.key === 'Enter') go(); };
+  $('pinIn').focus();
+}
+
+// ================= router / render =================
+function render() {
+  $('pageName').textContent = NAMES[view];
+  $('soundDot').hidden = bellReady();
+  document.querySelectorAll('#nav button').forEach(b => {
+    b.classList.toggle('on', b.dataset.go === view);
+    if (b.dataset.go === 'alerts') { const n = unreadCount(); let d = b.querySelector('.nd'); if (n && !d) { d = document.createElement('span'); d.className = 'nd'; b.appendChild(d); } if (d) { if (n) d.textContent = n; else d.remove(); } }
+    if (b.dataset.go === 'live') b.classList.toggle('livedot', online() && !!snap.playing);
+  });
+  const html = pairBanner() + { activities: vActivities, workout: vWorkout, live: vLive, alerts: vAlerts, reward: vReward }[view]();
+  const app = $('app'), y = window.scrollY;
+  if (app.dataset.sig !== html) {
+    const typed = $('msgText')?.value, focused = document.activeElement?.id === 'msgText';
+    app.innerHTML = html; app.dataset.sig = html; window.scrollTo(0, y);
+    if ($('msgText') && typed) { $('msgText').value = typed; if (focused) $('msgText').focus(); }
+    if ($('msgForm')) $('msgForm').onsubmit = sendMessage;
+  }
+  // banner on every page while the elder is exercising
+  const pb = $('playBar'), playing = online() && snap.playing ? snap : null;
+  pb.hidden = !playing || view === 'live';
+  if (!pb.hidden) pb.innerHTML = `<span class="pdot"></span><div><b>${esc(elderName())}กำลังออกกำลังกาย</b><small>${esc(playingText(playing))}</small></div><button type="button" data-golive>${ic('eye', 20)}ดูสด</button>`;
+  $('app').style.paddingTop = pb.hidden ? '' : '146px';
+  // phone-as-CCTV: show the picture as soon as the phone starts sending, and come back after a drop
+  if (view === 'live') attachWatch();
+  trackAlert();
+  const a = online() && snap.alert && snap.alert.status === 'open' ? snap.alert : null;
+  showSos(a);
+}
+function go(v) { view = v; location.hash = v; dayIdx = 0; $('app').dataset.sig = ''; render(); window.scrollTo(0, 0); }
+const redraw = () => { $('app').dataset.sig = ''; render(); };
+
+// ================= urgent alert: full-screen, sound, vibration, notification =================
+let audioCtx = null, alarmTimer = null, hiddenAlert = null, notified = null; const seenAlertAt = {};
+const bellReady = () => audioCtx?.state === 'running';
+async function enableBell() {
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); await audioCtx.resume(); } catch {}
+  if ('Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch {} }
+  render();
+}
+function beep() {
+  if (!bellReady()) return;
+  [988, 740, 988, 740].forEach((f, i) => { const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime + i * .24; o.type = 'square'; o.frequency.value = f; g.gain.value = .12; o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + .2); });
+}
+const alertTitle = a => a.kind === 'fall' ? `${elderName()}อาจล้ม` : `${elderName()}ขอความช่วยเหลือ`;
+function showSos(a) {
+  const show = a && hiddenAlert !== a.id;
+  $('sos').hidden = !show;
+  document.title = a ? `(!) ${alertTitle(a)} · LookLens` : 'LookLens ลูกหลาน';
+  if (a && notified !== a.id) {
+    notified = a.id;
+    try { navigator.vibrate?.([400, 150, 400, 150, 600]); } catch {}
+    if ('Notification' in window && Notification.permission === 'granted') { try { new Notification(`! ${alertTitle(a)}`, { body: `${hhmm(a.ts)} น. · โทรหาท่านหรือโทร 1669`, requireInteraction: true }); } catch {} }
+  }
+  if (show) {
+    $('sosIcon').innerHTML = ic('alert', 48);
+    $('sosTitle').textContent = alertTitle(a);
+    $('sosWhere').textContent = `${elderName()} · บริเวณกล้องในบ้าน · ${hhmm(a.ts)} น.`;
+    $('sosDetail').textContent = a.kind === 'fall' ? 'ให้โทรหาท่านทันทีเพื่อตรวจสอบ ถ้าไม่รับสายหรือไม่ปลอดภัย ให้โทร 1669' : `${elderName()}กดปุ่มเรียกลูกหลานที่จอในบ้าน`;
+    // escalation: nobody has answered for a minute -> push 1669 to the front
+    seenAlertAt[a.id] = seenAlertAt[a.id] || Date.now();
+    const late = a.status === 'open' && Date.now() - seenAlertAt[a.id] > 60000;
+    if (late) $('sosDetail').textContent = 'ผ่านไปกว่า 1 นาทีแล้วยังไม่มีใครรับทราบ · โทร 1669 ทันทีถ้าติดต่อท่านไม่ได้';
+    $('sosCall').style.cssText = late ? 'background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 0 0 4px rgba(186,26,26,.25)' : '';
+    $('sosGo').innerHTML = `${ic('check', 24)}ฉันกำลังไป`;
+    const t = phoneTel(), call = $('sosCallElder');
+    call.innerHTML = `${ic('phone', 24)}${t ? `โทรหา${esc(elderName())} · ${esc(phoneRaw())}` : `ตั้งเบอร์โทร${esc(elderName())}`}`;
+    call.setAttribute('href', t ? `tel:${t}` : '#'); call.dataset.needphone = t ? '' : '1';
+    $('sosCall').innerHTML = `${ic('phone', 24)}โทร 1669 เจ็บป่วยฉุกเฉิน`;
+  }
+  if (a) { if (!alarmTimer) { beep(); alarmTimer = setInterval(beep, 2500); } }
+  else if (alarmTimer) { clearInterval(alarmTimer); alarmTimer = null; }
+}
+$('sosGo').onclick = () => { bus.send({ type: 'ack', by: sender() }); try { const l = auditLoad(), r = snap?.alert && l.find(x => x.id === snap.alert.id); if (r && !r.ackAt) { r.ackAt = Date.now(); r.by = sender(); auditSave(l); } } catch {} toast('แจ้งที่บ้านแล้วว่าคุณกำลังไป'); };
+$('sosHide').onclick = () => { if (snap?.alert) hiddenAlert = snap.alert.id; render(); };
+
+// ================= sheets: settings, profiles, barcode =================
+function openSheet(html) { $('sheet').innerHTML = html; fillIcons($('sheet')); $('sheetBg').hidden = false; }
+const closeSheet = () => { $('sheetBg').hidden = true; };
+$('sheetBg').onclick = e => { if (e.target === $('sheetBg')) closeSheet(); };
+function profileBlock(role, title, extra) {
+  const p = CARELY.profile(role);
+  return `<h2 style="margin-top:6px">${ic(role === 'elder' ? 'users' : 'user', 26)}${title}</h2>
+    <div class="photo-row"><div class="av photo-prev" id="${role}Prev">${CARELY.avatar(role, ic('user', 48))}</div><div style="flex:1;display:grid;gap:8px"><button class="btn s sm" data-pickphoto="${role}" type="button" style="width:100%">${ic('image', 20)}เลือกรูป</button><button class="btn s sm" data-delphoto="${role}" type="button" style="width:100%">ลบรูป</button></div></div>
+    <label for="${role}Name">ชื่อ</label><input id="${role}Name" value="${esc(p.name)}" maxlength="30">${extra || ''}`;
+}
+function openProfile() {
+  const photos = {}, canPick = 'contacts' in navigator && 'ContactsManager' in window;
+  openSheet(`${profileBlock('family', 'โปรไฟล์ของฉัน')}<hr>
+    ${profileBlock('elder', 'โปรไฟล์ผู้สูงอายุ', `<label for="ePhone">เบอร์โทร (ใช้ปุ่มโทรหาท่านเมื่อล้ม)</label><input id="ePhone" type="tel" inputmode="tel" placeholder="เช่น 081-234-5678" value="${esc(phoneRaw())}" maxlength="20">${canPick ? `<button class="btn s sm" id="ePick" type="button" style="margin-top:8px">${ic('contact', 20)}เลือกจากรายชื่อในมือถือ</button>` : `<p class="muted" style="font-size:13px;margin:6px 0 0">เบราว์เซอร์นี้ดึงรายชื่อจากมือถือไม่ได้ ให้พิมพ์เบอร์เอง (Chrome บน Android เลือกจากรายชื่อได้)</p>`}`)}
+    <p class="muted" style="font-size:13px;margin:10px 0 0">เลือกรูปจากโฟลเดอร์ Final Face หรือรูปอื่นในเครื่อง รูปเก็บไว้ในเครื่องนี้เท่านั้น</p>
+    <div class="two"><button class="btn s" id="pClose" type="button">ยกเลิก</button><button class="btn p" id="pSave" type="button">บันทึก</button></div>`);
+  let target = null;
+  $('sheet').onclick = e => {
+    const pk = e.target.closest('[data-pickphoto]'), dl = e.target.closest('[data-delphoto]');
+    if (pk) { target = pk.dataset.pickphoto; $('photoFile').click(); }
+    if (dl) { photos[dl.dataset.delphoto] = null; $(dl.dataset.delphoto + 'Prev').innerHTML = ic('user', 48); }
+  };
+  $('photoFile').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (!f || !target) return; try { photos[target] = await CARELY.readPhoto(f); $(target + 'Prev').innerHTML = `<img src="${photos[target]}" alt="" style="width:100%;height:100%;object-fit:cover">`; } catch { toast('อ่านรูปไม่ได้ ลองรูปอื่น'); } };
+  if ($('ePick')) $('ePick').onclick = async () => { try { const c = await navigator.contacts.select(['name', 'tel'], { multiple: false }); const tel = c && c[0] && (c[0].tel || [])[0]; if (tel) $('ePhone').value = tel; } catch {} };
+  $('pClose').onclick = () => { $('sheet').onclick = null; closeSheet(); };
+  $('pSave').onclick = () => {
+    CARELY.saveProfile('family', $('familyName').value, photos.family);
+    CARELY.saveProfile('elder', $('elderName').value, photos.elder);
+    // the elder's profile lives on the home screen, so tell it (works from a phone too)
+    bus.send({ type: 'profile', role: 'elder', name: $('elderName').value, photo: photos.elder });
+    if (CARELY.remote.elder) CARELY.remote.elder = { name: $('elderName').value.trim() || 'คุณยาย', photo: photos.elder === undefined ? CARELY.remote.elder.photo : (photos.elder || '') };
+    store.set('carely-phone', $('ePhone').value.trim());
+    $('sheet').onclick = null; closeSheet(); paintAvatar(); redraw(); toast('บันทึกโปรไฟล์แล้ว');
+  };
+}
+$('btnProfile').onclick = openProfile;
+$('btnSettings').onclick = () => {
+  const mode = store.get('carely-mode', 'auto');
+  openSheet(`<h2>${ic('settings', 28)}ตั้งค่า</h2>
+  <label for="sLimit">เตือนเมื่อนั่งต่อเนื่องเกิน (นาที)</label><input id="sLimit" type="number" min="1" max="240" value="${CARELY.sitLimit()}">
+  <label for="sMode">แหล่งข้อมูลที่แสดง</label><select id="sMode"><option value="auto"${mode === 'auto' ? ' selected' : ''}>อัตโนมัติ (ไม่เชื่อมต่อ = ตัวอย่าง)</option><option value="sample"${mode === 'sample' ? ' selected' : ''}>ข้อมูลตัวอย่างเสมอ</option><option value="live"${mode === 'live' ? ' selected' : ''}>ข้อมูลจริงเท่านั้น</option></select>
+  <div class="line"><span class="inl">${ic(bellReady() ? 'volume' : 'volumeOff', 24)}เสียงและแจ้งเตือน · ${bellReady() ? 'เปิดแล้ว' : 'ยังไม่เปิด'}</span><button class="btn s sm" id="sSound" type="button">${bellReady() ? 'ทดสอบ' : 'เปิด'}</button></div>
+  <p class="muted" style="font-size:13px;margin:0">เบราว์เซอร์ยอมให้มีเสียงก็ต่อเมื่อกดปุ่มนี้ 1 ครั้งหลังเปิดหน้า เมื่อมีเหตุล้ม จะขึ้นหน้าต่างสีแดงเต็มจอและดังเตือนจนกว่าจะกด “ฉันกำลังไป”</p>
+  <div class="line"><span>จอในบ้าน</span><a href="index.html" target="_blank" rel="noopener">เปิด</a></div>
+  <button class="btn p" id="sSave" type="button" style="margin-top:14px">บันทึก</button>`);
+  $('sSound').onclick = async () => { if (!bellReady()) await enableBell(); beep(); closeSheet(); toast('เปิดเสียงเตือนแล้ว'); };
+  $('sSave').onclick = () => { store.set('carely-sit-limit', String(Math.max(1, Math.min(240, +$('sLimit').value || 60)))); store.set('carely-mode', $('sMode').value); closeSheet(); redraw(); toast('บันทึกแล้ว'); };
+};
+function barcodeSheet(id) {
+  const bars = Array.from({ length: 44 }, (_, i) => `<i style="width:${1 + ((i * 7 + id.length) % 4)}px"></i>`).join('');
+  openSheet(`<h2>${ic('ticket', 28)}${id === 'tea' ? 'ชาสมุนไพรฟรี' : 'ส่วนลดร้านขายยา 10%'}</h2><div class="barcode" aria-label="บาร์โค้ดตัวอย่าง">${bars}</div><p class="muted" style="text-align:center;margin:0;font-size:14px">บาร์โค้ดตัวอย่างสำหรับสาธิต ใช้จริงไม่ได้</p><button class="btn s" id="bClose" type="button" style="margin-top:14px">ปิด</button>`);
+  $('bClose').onclick = closeSheet;
+}
+
+// ================= clicks =================
+document.addEventListener('click', e => {
+  const t = e.target, q = s => t.closest(s);
+  let el;
+  if ((el = q('[data-go]'))) { if (el.dataset.go === 'summary') { location.href = 'summary.html'; return; } go(el.dataset.go); return; }
+  if (q('[data-golive]')) { go('live'); startWatch(); return; }
+  if ((el = q('[data-mode]'))) { store.set('carely-mode', el.dataset.mode); redraw(); return; }
+  if ((el = q('[data-period]'))) { period = el.dataset.period; if (period === 'day' && metric === 'sit') metric = 'bath'; redraw(); return; }
+  if ((el = q('[data-metric]'))) { metric = el.dataset.metric; redraw(); return; }
+  if ((el = q('[data-day]'))) { const S = summary(); dayIdx = Math.max(0, Math.min(S.days.length - 1, dayIdx + (+el.dataset.day))); redraw(); return; }
+  if ((el = q('[data-allhist]'))) { showAllHist = !showAllHist; redraw(); return; }
+  if ((el = q('[data-nf]'))) { nFilter = el.dataset.nf; redraw(); return; }
+  if ((el = q('[data-ex]'))) { openExercise(el.dataset.ex); return; }
+  if (q('[data-sendprog]')) { sendProgram(); return; }
+  if (q('[data-watch]')) { startWatch(); return; }
+  if (q('[data-full]')) { const s = $('liveSlot'); if (document.fullscreenElement) document.exitFullscreen(); else if (s.requestFullscreen) s.requestFullscreen(); return; }
+  if (q('[data-blur]')) { blurOn = !blurOn; store.set('carely-blur', blurOn ? '1' : '0'); applyBlur(); redraw(); return; }
+  if (q('[data-unwatch]')) { userStopped = true; bus.send({ type: 'frames_stop' }); lastFrame = 0; frameImg.remove(); if (rtc.state !== 'idle' && rtc.mode === 'watch') rtc.hangup(); redraw(); return; }
+  if (q('[data-camreq]')) { bus.send({ type: 'cam_request', by: sender() }); toast(`ขอให้${elderName()}เปิดกล้องแล้ว`); return; }
+  if (q('[data-pair]')) { showPairing({ open: true }); return; }
+  if (q('[data-setphone]') || (q('[data-call-elder]') && q('[data-call-elder]').dataset.needphone === '1')) { e.preventDefault(); openProfile(); return; }
+  if (q('[data-call-elder]')) { toast(`กำลังโทรหา${elderName()}`); return; }
+  if (q('[data-call]')) {
+    if (q('a[href^="tel:"]')) { bus.send({ type: 'call1669', by: sender() }); toast('กำลังโทร 1669 · แจ้งจอในบ้านแล้ว'); } else startCall();
+    return;
+  }
+  if ((el = q('[data-claim]'))) { const g = claimed(); if (!g.includes(el.dataset.claim)) { g.push(el.dataset.claim); store.set('carely-claimed', JSON.stringify(g)); } toast('รับรางวัลแล้ว'); redraw(); return; }
+  if ((el = q('[data-barcode]'))) { barcodeSheet(el.dataset.barcode); return; }
+  if (q('[data-rewardgo]')) { $('rewards')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (q('[data-rhist]')) { const g = claimed(); openSheet(`<h2>${ic('history', 28)}ประวัติรางวัล</h2>${g.length ? g.map(id => `<div class="line"><span>${id === 'tea' ? 'ชาสมุนไพรฟรี' : 'ส่วนลดร้านขายยา 10%'}</span><b>รับแล้ว</b></div>`).join('') : '<div class="empty">ยังไม่เคยรับรางวัล</div>'}<button class="btn s" id="hClose" type="button" style="margin-top:14px">ปิด</button>`); $('hClose').onclick = closeSheet; return; }
+  if (q('[data-invite]')) { const url = location.href.split('#')[0]; (navigator.share ? navigator.share({ title: 'LookLens', text: 'มาดูแลคนที่เรารักด้วยกัน', url }) : navigator.clipboard.writeText(url).then(() => toast('คัดลอกลิงก์แล้ว'))).catch(() => toast('คัดลอกลิงก์ไม่สำเร็จ')); return; }
+  if (t.id === 'markRead') { store.set('carely-alerts-seen', Date.now()); toast('ทำเครื่องหมายอ่านแล้ว'); redraw(); }
+});
+window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (NAMES[v] && v !== view) { view = v; redraw(); } });
+window.addEventListener('pagehide', () => { if (rtc.state !== 'idle') rtc.hangup(); });
+
+readStored(); render();
+bus.send({ type: 'hello' });
+setInterval(() => { readStored(); render(); }, 1000);
+</script>
+</body>
+</html>

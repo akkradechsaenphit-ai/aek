@@ -1,0 +1,22 @@
+[project]
+name = "carely-radar"
+version = "0.1.0"
+description = "Carely: radar fall alerts over LINE OA + get-up games for elders living alone"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=1.0.0",
+    "fastapi>=0.115.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.8.0",
+    "pyserial>=3.5",
+    "python-dotenv>=1.0.1",
+    "uvicorn>=0.30.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

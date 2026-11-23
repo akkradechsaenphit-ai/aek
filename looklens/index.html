@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LookLens</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%230d5f44'/><circle cx='50' cy='50' r='20' fill='%23a8f2ce'/></svg>">
+<style>
+:root{--surface:#eef5ff;--card:#fff;--container:#e1ecfa;--ink:#141c28;--ink2:#3a4656;--muted:#62707f;--line:#d3dfee;--primary:#0b3a78;--primary2:#1d63c9;--mint:#bfe0ff;--sage:#cfe3ff;--red:#ba1a1a;--red-pale:#ffdad6;--amber:#9d712c;--shadow:0 6px 20px rgba(16,45,100,.07)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#dce6f2}
+body{color:var(--ink);font:18px/1.55 "Plus Jakarta Sans","Noto Sans Thai",-apple-system,"Segoe UI",sans-serif}
+.sv{display:block;flex:none}
+.app{max-width:480px;min-height:100vh;margin:0 auto;background:var(--surface);position:relative;padding:92px 16px 112px;box-shadow:0 0 40px rgba(0,0,0,.08)}
+header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:84px;z-index:20;background:rgba(238,245,255,.92);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 1px 12px rgba(0,0,0,.04)}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#1d63c9,#3b82f6);display:grid;place-items:center;color:#fff}
+.brand b{display:block;color:var(--primary);font-size:22px;line-height:1.1;letter-spacing:-.3px}.brand small{color:var(--ink2);font-size:15px;font-weight:600}
+.top-actions{display:flex;gap:10px}
+.icon-btn{width:60px;height:60px;border-radius:50%;border:0;background:var(--container);display:grid;place-items:center;color:var(--ink2);cursor:pointer;padding:0;overflow:hidden}
+.icon-btn.avatar{background:var(--sage);color:var(--primary)}
+.icon-btn:active{transform:scale(.95)}
+h1{font-size:38px;line-height:1.15;margin:4px 0 2px;color:var(--primary);letter-spacing:-.4px}
+.sub{color:var(--ink2);font-weight:600;font-size:16px;margin:0 0 18px}
+h2{font-size:23px;margin:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card{background:var(--card);border-radius:26px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card.flat{background:var(--container);box-shadow:none}
+.btn,button.btn{border:0;border-radius:20px;padding:18px 20px;font:inherit;font-weight:800;font-size:20px;cursor:pointer;width:100%;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;min-height:64px}
+.btn.p{background:var(--primary);color:#fff}.btn.s{background:var(--container);color:var(--primary)}.btn.r{background:var(--red);color:#fff}.btn.o{background:#fff;color:var(--red);border:3px solid var(--red)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.small{width:auto;padding:12px 18px;font-size:17px;border-radius:16px;min-height:52px}
+.big-card{display:flex;align-items:center;gap:16px;border:0;border-radius:28px;padding:18px 20px;width:100%;margin-bottom:16px;cursor:pointer;font:inherit;text-align:left;min-height:96px}
+.big-card .ico{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;flex:none;color:#fff}
+.big-card b{display:block;font-size:23px;line-height:1.25}.big-card span{font-size:16px}
+.big-card.sos{background:var(--red-pale);color:var(--red)}.big-card.sos .ico{background:var(--red)}.big-card.sos span{color:var(--ink2)}
+.big-card.call{background:#d6e8ff;color:var(--primary)}.big-card.call .ico{background:var(--primary2)}.big-card.call span{color:var(--ink2)}
+.offer{background:var(--card);border:3px solid var(--sage);border-radius:28px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.offer .head{display:grid;grid-template-columns:68px 1fr;gap:14px;align-items:center}
+.offer .ico{width:68px;height:68px;border-radius:20px;background:var(--sage);display:grid;place-items:center;color:var(--primary)}
+.offer h3{margin:0;font-size:21px}.offer p{margin:2px 0 0;color:var(--ink2);font-size:17px}
+.offer .acts{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-top:14px}
+.prog{display:flex;gap:10px;margin:14px 0 16px}
+.prog .st{flex:1;background:var(--container);border-radius:20px;padding:12px 6px;text-align:center;color:var(--primary)}
+.prog .st b{display:block;font-size:15.5px;margin-top:4px;color:var(--ink)}.prog .st small{color:var(--muted);font-size:14px}
+.tip{background:rgba(191,224,255,.4);border-radius:20px;padding:16px;display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.tip .ico{width:46px;height:46px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;flex:none}
+.tip b{display:block;font-size:15px;color:#0a4a9a}.tip p{margin:0;font-size:16.5px;color:var(--ink2)}
+.live{display:inline-flex;align-items:center;gap:6px;background:var(--container);color:var(--muted);padding:6px 14px;border-radius:50px;font-size:14px;font-weight:800}
+.live.on{background:var(--sage);color:var(--primary)}.live.on:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--primary2);animation:p 1.6s infinite}
+@keyframes p{50%{opacity:.3}}
+.camera{aspect-ratio:4/3;width:100%;background:#232d3d;border-radius:22px;display:grid;place-items:center;position:relative;overflow:hidden;margin-top:12px}
+.camera video,.camera canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.camera canvas{pointer-events:none}
+.camera-placeholder{max-width:320px;padding:22px;text-align:center;color:#dce6f2;font-size:15px}
+.camera-placeholder strong{display:block;color:#fff;font-size:19px;margin-bottom:6px}
+.ai-box{position:absolute;bottom:10px;left:10px;right:10px;background:rgba(255,255,255,.95);color:var(--ink);border-radius:16px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ai-status small{display:block;color:var(--muted);font-size:13px}.ai-status strong{font-size:17px;color:var(--primary)}
+.confidence{font-size:13px;color:var(--muted);text-align:right}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.status{margin-top:12px;font-size:15px;color:var(--ink2);min-height:20px}.status.error{color:var(--red);font-weight:600}
+.tally{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.tally div{background:var(--card);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow)}
+.tally small{display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:700;font-size:14px}.tally b{font-size:29px;font-weight:800;line-height:1.2;color:var(--primary)}
+.sharebar{display:flex;align-items:center;gap:12px;background:#fff3d6;color:#6b5217;border-radius:20px;padding:12px 16px;margin-bottom:16px;font-weight:700;font-size:16px}
+.sharebar button{margin-left:auto;border:0;background:#fff;color:var(--primary);font:inherit;font-weight:800;border-radius:14px;padding:10px 14px;cursor:pointer;min-height:46px}
+/* exercise player */
+.player{position:fixed;inset:0;z-index:50;background:var(--surface);overflow:auto}
+.player[hidden]{display:none}
+.player-in{max-width:480px;min-height:100%;margin:0 auto;padding:20px 16px 32px;display:flex;flex-direction:column}
+.player-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.player-head h2{margin:0;font-size:24px;color:var(--primary);display:flex;align-items:center;gap:10px}
+.player-body{text-align:center;margin-top:18px;flex:1}
+.step-ico{width:170px;height:170px;border-radius:50%;background:var(--sage);color:var(--primary);display:grid;place-items:center;margin:8px auto 14px;transition:transform .15s}.step-ico.pop{transform:scale(1.1)}
+.lead{font-size:30px;font-weight:800;margin:8px 0;line-height:1.35}
+.counter{font-size:54px;font-weight:800;color:var(--primary);min-height:66px}
+.bar{height:20px;background:var(--container);border-radius:12px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;width:0;background:var(--primary2);border-radius:12px;transition:width .3s}
+.motion-hint{font-size:20px;color:var(--amber);min-height:30px;font-weight:700}.motion-hint.ok{color:var(--primary2)}
+.mini-cam{width:100%;max-width:360px;aspect-ratio:4/3;border-radius:22px;background:#232d3d;margin:14px auto 0;display:block;transform:scaleX(-1);object-fit:cover}
+.cam-slot{margin-top:6px}.cam-slot .btn{max-width:360px;margin:14px auto 0}
+.stars{display:flex;justify-content:center;gap:4px;color:#e0a21c}
+/* alert */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(120,30,28,.9);display:grid;place-items:center;padding:16px}.overlay[hidden]{display:none}
+.overlay-box{width:min(100%,440px);background:#fff;color:var(--ink);padding:26px 22px;border-radius:30px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.overlay-box .big{width:96px;height:96px;margin:0 auto;border-radius:50%;background:var(--red-pale);color:var(--red);display:grid;place-items:center}
+.overlay-box h2{color:var(--red);margin:10px 0 4px;font-size:32px}.overlay-box p{margin:4px 0;font-size:18px}
+.overlay-box .info{padding:10px 12px;background:var(--container);border-radius:16px;margin:12px 0;font-size:16px;color:var(--ink2)}
+.overlay-box .acts{display:grid;gap:12px;margin-top:8px}
+#responseMessage{font-weight:700;color:var(--primary2);min-height:24px;margin-top:10px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:20;background:rgba(238,245,255,.95);backdrop-filter:blur(14px);box-shadow:0 -8px 24px rgba(16,45,100,.07);display:flex;justify-content:space-around;align-items:center;height:92px;padding:6px 8px env(safe-area-inset-bottom)}
+nav button{background:none;border:0;flex:1;height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);cursor:pointer;border-radius:22px;position:relative;margin:0 3px;transition:background .15s,color .15s;font:inherit;font-size:14px;font-weight:800}
+nav button.on{color:var(--primary);background:var(--sage)}
+nav button.sosnav{color:var(--red)}
+nav button.live-dot:after{content:"";position:absolute;top:8px;right:calc(50% - 26px);width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2px solid var(--surface)}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:flex;align-items:flex-end;justify-content:center}.sheet-bg[hidden]{display:none}
+.sheet{background:var(--surface);width:100%;max-width:480px;border-radius:30px 30px 0 0;padding:24px 18px 30px;max-height:90vh;overflow:auto}
+.sheet h2{margin-bottom:12px;display:flex;align-items:center;gap:8px}.sheet label{display:block;font-size:16px;font-weight:700;color:var(--ink2);margin:14px 0 6px}
+.sheet input[type=text],.sheet input[type=number],.sheet input:not([type]){width:100%;border:2px solid var(--line);border-radius:16px;padding:14px;font:inherit;background:#fff}
+.sheet .line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.sheet a{color:var(--primary);font-weight:800;text-decoration:none}
+.sheet .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.photo-row{display:flex;gap:14px;align-items:center}.photo-prev{width:96px;height:96px;border-radius:50%;background:var(--sage);color:var(--primary);display:grid;place-items:center;overflow:hidden;flex:none}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.demo-grid .btn{font-size:16px;padding:12px 8px;min-height:56px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:108px;background:var(--ink);color:#fff;border-radius:16px;padding:14px 18px;font-size:16px;z-index:60;max-width:calc(100% - 32px)}.toast[hidden]{display:none}
+[hidden]{display:none!important}
+</style>
+<script>if (location.protocol === 'file:') location.replace('http://localhost:8090/' + location.pathname.split('/').pop() + location.search + location.hash);   // opened as a file: no link to the phone, so use the local server</script>
+<script src="carely-shared.js"></script>
+<link rel="stylesheet" href="looklens-glass.css">
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo" data-ic="leaf" data-s="26"></div><div><b>LookLens</b><small id="pageName">จอในบ้าน</small></div></div>
+  <div class="top-actions">
+    <button class="icon-btn" id="btnSettings" type="button" aria-label="ตั้งค่า" title="ตั้งค่า" data-ic="settings" data-s="30"></button>
+    <button class="icon-btn avatar" id="btnProfile" type="button" aria-label="โปรไฟล์" title="โปรไฟล์"></button>
+  </div>
+</header>
+
+<main class="app">
+  <!-- ===== home ===== -->
+  <section id="viewHome">
+    <h1 id="hello">สวัสดีค่ะ</h1>
+    <p class="sub">แตะปุ่มใหญ่ๆ เพื่อออกกำลังกาย โทรหาลูกหลาน หรือขอความช่วยเหลือ</p>
+    <div class="sharebar" id="shareBar" hidden><span data-ic="eye" data-s="26"></span><span>ลูกหลานกำลังดูภาพสดจากกล้อง</span><button id="shareStop" type="button">หยุดแชร์</button></div>
+    <button class="big-card sos" id="sosBtn" type="button"><div class="ico" data-ic="alert" data-s="38"></div><div><b>เรียกลูกหลาน</b><span>กดเมื่อต้องการความช่วยเหลือ</span></div></button>
+    <button class="big-card call" id="callBtn" type="button"><div class="ico" data-ic="video" data-s="38"></div><div><b>โทรวิดีโอหาลูกหลาน</b><span>เห็นหน้ากันแบบสดๆ</span></div></button>
+    <div id="inbox" aria-live="polite"></div>
+    <div class="card">
+      <div class="row"><h2>ออกกำลังกายวันนี้</h2><span id="gameHint" style="color:var(--muted);font-size:14px;text-align:right">เปิดกล้องก่อน กล้องจะช่วยนับ</span></div>
+      <div class="prog" id="prog"></div>
+      <button class="btn p" id="startProgram" type="button"></button>
+    </div>
+    <div class="tip"><div class="ico" data-ic="shield" data-s="24"></div><div><b>เตือนความปลอดภัย</b><p>วางเก้าอี้ที่มั่นคงไว้ข้างๆ พักเมื่อเหนื่อย และหยุดทันทีถ้าเวียนหัวหรือเจ็บ</p></div></div>
+  </section>
+
+  <!-- ===== camera ===== -->
+  <section id="viewCam" hidden>
+    <h1>กล้อง</h1>
+    <p class="sub">ตรวจจับท่าทางและเฝ้าระวังการล้ม</p>
+    <div class="card">
+      <div class="row"><h2>การตรวจจับ</h2><span class="live" id="liveTag">OFFLINE</span></div>
+      <div class="camera">
+        <video id="video" autoplay playsinline muted hidden></video>
+        <canvas id="overlay" hidden></canvas>
+        <div class="camera-placeholder" id="placeholder"><strong>พร้อมเริ่มตรวจจับ</strong>วางกล้องให้เห็นคนหนึ่งคนตั้งแต่ศีรษะถึงเท้า ไม่ถูกโต๊ะหรือสิ่งของบัง และมีแสงสว่างเพียงพอ</div>
+        <div class="ai-box"><div class="ai-status"><small>สถานะตอนนี้</small><strong id="cameraActivity">ยังไม่เริ่ม</strong></div><span id="confidence" class="confidence">—</span></div>
+      </div>
+      <div class="controls">
+        <button class="btn p" id="start" type="button">เริ่มตรวจจับ</button>
+        <button class="btn s" id="stop" type="button" disabled>หยุดกล้อง</button>
+      </div>
+      <a class="btn p" id="httpsBtn" href="#" hidden style="margin-top:12px">ใช้กล้องมือถือ: เปิดผ่าน https</a>
+      <div id="status" class="status" role="status">กด “เริ่มตรวจจับ” แล้วอนุญาตการใช้กล้อง</div>
+    </div>
+    <div class="row" style="margin:6px 0 10px"><h2>สรุปวันนี้</h2></div>
+    <div class="tally">
+      <div><small>นั่ง</small><b id="tSit">0 นาที</b></div>
+      <div><small>ยืน / เดิน</small><b id="tUp">0 นาที</b></div>
+      <div><small>นอน / อยู่ต่ำ</small><b id="tLow">0 นาที</b></div>
+      <div><small>ยกแขน · ปรบมือ</small><b id="tReps">0 · 0</b></div>
+      <div><small>ท่าที่ทำวันนี้</small><b id="tGames">0</b></div>
+      <div><small>อาจล้ม</small><b id="tFalls">0</b></div>
+    </div>
+    <div class="card flat" style="font-size:15px;color:var(--ink2)">ต้นแบบสำหรับสาธิต ไม่ใช่อุปกรณ์ทางการแพทย์ การตรวจจับจากกล้องอาจคลาดเคลื่อน ภาพจากกล้องประมวลผลบนอุปกรณ์นี้ ลูกหลานจะเห็นภาพสดก็ต่อเมื่อขอดู และมีแถบแจ้งให้ทราบทุกครั้ง</div>
+  </section>
+</main>
+
+<nav id="nav" aria-label="เมนูหลัก">
+  <button data-go="home" aria-label="หน้าหลัก" title="หน้าหลัก"><span data-ic="grid" data-s="34"></span>หลัก</button>
+  <button id="navCall" aria-label="โทรหาลูกหลาน" title="โทรหาลูกหลาน"><span data-ic="video" data-s="34"></span>โทร</button>
+  <button class="sosnav" id="navSos" aria-label="เรียกลูกหลาน" title="เรียกลูกหลาน"><span data-ic="alert" data-s="34"></span>ช่วย</button>
+</nav>
+
+<div class="player" id="player" hidden>
+  <div class="player-in">
+    <div class="player-head"><h2 id="gameTitle"></h2><button class="btn s small" id="gameStop" type="button"></button></div>
+    <div class="player-body" id="gameBody"></div>
+  </div>
+</div>
+
+<div id="fallAlert" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="fallTitle" hidden>
+  <div class="overlay-box">
+    <div class="big" data-ic="alert" data-s="52"></div>
+    <h2 id="fallTitle">เป็นอะไรไหมคะ</h2>
+    <p id="fallText">กล้องเห็นว่าอาจล้ม · แจ้งลูกหลานแล้วค่ะ</p>
+    <div class="info">เวลา <span id="fallTime">--:--</span> น.</div>
+    <div class="acts">
+      <button class="btn p" type="button" id="imOk"></button>
+      <a class="btn o" id="call1669" href="tel:1669"></a>
+    </div>
+    <p id="responseMessage" aria-live="polite"></p>
+  </div>
+</div>
+
+<div class="sheet-bg" id="sheetBg" hidden><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="photoFile" accept="image/*" hidden>
+
+<script>
+'use strict';
+// ================= icons =================
+const IC = {
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/>',
+  settings: '<path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+  leaf: '<path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  check: '<path d="M5 12l4.5 4.5L19 7"/>',
+  alert: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+  phone: '<path d="M5 3h4l2 5-2.5 1.5a11 11 0 006 6L16 13l5 2v4a2 2 0 01-2 2A16 16 0 013 5a2 2 0 012-2z"/>',
+  play: '<path d="M7 4l13 8-13 8z" fill="currentColor"/>',
+  stop: '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>',
+  camera: '<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="4"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  award: '<circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" fill="currentColor"/>',
+  dot: '<circle cx="12" cy="12" r="3" fill="currentColor"/>',
+};
+Object.assign(IC, CARELY.ICONS);
+const ic = (n, s = 24) => `<svg class="sv" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || IC.dot}</svg>`;
+const fillIcons = root => root.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = ic(el.dataset.ic, +el.dataset.s || 24); });
+fillIcons(document);
+
+// ================= basics =================
+const GAMES = CARELY.EXERCISES, BY_ID = CARELY.EX_BY_ID, PROGRAM = CARELY.PROGRAM;
+const $ = id => document.getElementById(id);
+const video = $('video'), canvas = $('overlay'), ctx = canvas.getContext('2d');
+const TH_NUM = ["หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า","สิบ","สิบเอ็ด","สิบสอง","สิบสาม","สิบสี่","สิบห้า","สิบหก","สิบเจ็ด","สิบแปด","สิบเก้า","ยี่สิบ"];
+const CHEER = ["เก่งมากค่ะ", "อีกนิดเดียวค่ะ", "สู้ๆ นะคะ", "ยอดเยี่ยมเลยค่ะ"];
+const REP_HINT = { arms_up: "ยกแขนสองข้างให้สูงกว่าศีรษะนะคะ", clap: "ปรบมือให้มือสองข้างแตะกันนะคะ", stand_up: "ลุกขึ้นยืนแล้วนั่งลง ให้กล้องเห็นทั้งตัวนะคะ" };
+const names = { sitting: 'นั่ง', standing: 'ยืน', walking: 'เดิน', low: 'นอน / อยู่ต่ำ', unknown: 'ขยับกล้องให้เห็นทั้งตัว' };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtMin = m => `${Math.floor(Math.max(0, m))} นาที`;
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+const elderProfile = () => CARELY.profile('elder'), familyProfile = () => CARELY.profile('family');
+const elderName = () => elderProfile().name;
+function setStatus(text, error = false) { $('status').textContent = text; $('status').classList.toggle('error', error); }
+function toast(t) { const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 3800); }
+$('gameStop').innerHTML = `${ic('stop', 22)}หยุดเล่น`;
+$('imOk').innerHTML = `${ic('check', 26)}ฉันไม่เป็นไร`;
+$('call1669').innerHTML = `${ic('phone', 26)}โทร 1669 เจ็บป่วยฉุกเฉิน`;
+function paintAvatar() { $('btnProfile').innerHTML = CARELY.avatar('elder', ic('user', 30)); }
+paintAvatar();
+
+// ---------- voice & sound ----------
+let thVoice = null;
+function loadVoice() { const vs = window.speechSynthesis?.getVoices() || []; thVoice = vs.find(v => v.lang?.toLowerCase().startsWith('th')) || null; }
+if ('speechSynthesis' in window) { loadVoice(); speechSynthesis.onvoiceschanged = loadVoice; }
+function say(text, queue = false) {
+  if (!text || !('speechSynthesis' in window)) return;
+  if (!queue) speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; if (thVoice) u.voice = thVoice; u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+let audioCtx = null, soundUnlocked = false, autoStartT = 0;
+// browsers only allow sound after one touch; the first tap anywhere switches it on for good
+function unlockSound() {
+  if (soundUnlocked) return; soundUnlocked = true;
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume?.(); } catch {}
+  try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch {}
+}
+['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, unlockSound, { once: false, passive: true }));
+function chime(urgent = false) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    (urgent ? [880, 660, 880, 660] : [660, 880]).forEach((f, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime + i * 0.22;
+      o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+      o.connect(g).connect(audioCtx.destination); o.start(t); o.stop(t + 0.22);
+    });
+  } catch {}
+}
+
+// ================= daily tally (kept on this device) =================
+const storageKey = () => `carely-${new Date().toLocaleDateString('sv-SE')}`;
+let totals = { sitting: 0, standing: 0, walking: 0, low: 0 }, fallCount = 0, armCount = 0, clapCount = 0, gamesToday = 0, events = [];
+let standTimes = [], bathTimes = [], sitMax = 0, workouts = [], bathSensor = false;
+function loadDay() { try { const d = JSON.parse(localStorage.getItem(storageKey()) || '{}'); if (d.totals) totals = { ...totals, ...d.totals }; fallCount = +d.fallCount || 0; armCount = +d.armCount || 0; clapCount = +d.clapCount || 0; gamesToday = +d.gamesToday || 0; events = Array.isArray(d.events) ? d.events : []; standTimes = Array.isArray(d.standTimes) ? d.standTimes : []; bathTimes = Array.isArray(d.bathTimes) ? d.bathTimes : []; sitMax = +d.sitMax || 0; workouts = Array.isArray(d.workouts) ? d.workouts : []; bathSensor = !!d.bathSensor; } catch {} }
+function persist() { try { localStorage.setItem(storageKey(), JSON.stringify({ totals, fallCount, armCount, clapCount, gamesToday, events, standTimes, bathTimes, sitMax, workouts, bathSensor })); } catch {} }
+
+// ================= link to the family app (same computer: BroadcastChannel + localStorage) =================
+const bus = CARELY.makeBus('elder');
+let alert = null;          // {id, kind: fall|sos, ts, status: open|acked|resolved, by}
+let pendingOffer = null;   // routine the family (or the sit reminder) offers
+function log(kind, text, level = '') {
+  events.unshift({ ts: Date.now(), kind, text, level });
+  events = events.slice(0, 120); persist(); publish();
+}
+function publish() {
+  const snap = {
+    ts: Date.now(), running, activity: running ? person.current : null, activitySince: person.activitySince,
+    seesPerson: running && !!lastLandmarks, totals, armCount, clapCount, fallCount, gamesToday,
+    standTimes, bathTimes, bathSensor, workouts, sitLimit: CARELY.sitLimit(),
+    sitMax: Math.max(sitMax, running && person.current === 'sitting' ? (Date.now() - person.activitySince) / 60000 : 0),
+    playing: playing ? { id: playing.id, title: playing.title, current: playing.current, i: playing.i, n: playing.n } : null,
+    sharing: rtc.state !== 'idle' && rtc.mode === 'watch', inCall: rtc.state !== 'idle' && rtc.mode === 'call',
+    offer: pendingOffer, alert, events: events.slice(0, 60),
+  };
+  try { localStorage.setItem('carely-live', JSON.stringify(snap)); } catch {}
+  // every 15 s (and when a screen joins) also send history + profile, so a phone with no copy of this data can show it
+  if (Date.now() - lastExtra > 15000) { lastExtra = Date.now(); snap.extra = { hist: CARELY.history().map(d => ({ ...d, events: [] })), elder: elderProfile() }; }
+  bus.send({ type: 'state', snap });
+}
+let lastExtra = 0;
+function renderTally() {
+  $('tSit').textContent = fmtMin(totals.sitting); $('tUp').textContent = fmtMin(totals.standing + totals.walking);
+  $('tLow').textContent = fmtMin(totals.low); $('tReps').textContent = `${armCount} · ${clapCount}`; $('tFalls').textContent = fallCount; $('tGames').textContent = gamesToday;
+}
+
+// ================= camera (MediaPipe Pose) =================
+let landmarker = null, stream = null, running = false, lastVideoTime = -1, lastTaskTimestamp = 0, frameHandle = 0;
+let person = { frame: null, current: 'unknown', pending: 'unknown', pendingSince: 0, activitySince: 0, accountedAt: 0, fallSince: 0, lastFallAt: 0 };
+let lastLandmarks = null, lastMoveAt = 0, prevLegs = null, armState = 'down', clapState = 'apart', lastClap = 0;
+const repWaiters = new Set();
+
+function visible(l, i) { return l[i] && ((l[i].visibility ?? 1) > .35); }
+function angle(a, b, c) { const ab = [a.x - b.x, a.y - b.y], cb = [c.x - b.x, c.y - b.y], dot = ab[0] * cb[0] + ab[1] * cb[1], mag = Math.hypot(...ab) * Math.hypot(...cb); return mag ? Math.acos(Math.max(-1, Math.min(1, dot / mag))) * 180 / Math.PI : 180; }
+
+function classify(l, now, previousFrame) {
+  const ids = [11, 12, 23, 24, 25, 26, 27, 28];
+  if (!ids.every(i => visible(l, i))) return { type: 'unknown', fallSignal: false, frame: previousFrame };
+  const sh = { x: (l[11].x + l[12].x) / 2, y: (l[11].y + l[12].y) / 2 }, hip = { x: (l[23].x + l[24].x) / 2, y: (l[23].y + l[24].y) / 2 }, ank = { x: (l[27].x + l[28].x) / 2, y: (l[27].y + l[28].y) / 2 };
+  const torsoAngle = Math.atan2(Math.abs(sh.y - hip.y), Math.abs(sh.x - hip.x)) * 180 / Math.PI, knee = (angle(l[23], l[25], l[27]) + angle(l[24], l[26], l[28])) / 2;
+  let moving = false, drop = 0;
+  if (previousFrame) {
+    const dt = Math.max(.08, (now - previousFrame.time) / 1000);
+    moving = Math.hypot(hip.x - previousFrame.hipX, hip.y - previousFrame.hipY) > .014 || Math.hypot(ank.x - previousFrame.ankX, ank.y - previousFrame.ankY) > .025;
+    drop = (hip.y - previousFrame.hipY) / dt;
+  }
+  const frame = { hipX: hip.x, hipY: hip.y, ankX: ank.x, ankY: ank.y, time: now };
+  let type = 'standing';
+  if (torsoAngle < 48 && hip.y > .55) type = 'low'; else if (knee < 125 && hip.y > .35) type = 'sitting'; else if (moving) type = 'walking';
+  return { type, fallSignal: drop > .22 && torsoAngle < 58, frame };
+}
+
+function updateActivity(next, now) {
+  const t = person;
+  if (next !== t.pending) { t.pending = next; t.pendingSince = now; }
+  if (next === t.current) {
+    if (t.current !== 'unknown' && now - t.accountedAt >= 15000) { totals[t.current] += (now - t.accountedAt) / 60000; t.accountedAt = now; persist(); renderTally(); }
+    return;
+  }
+  if (next === 'unknown' || now - t.pendingSince < 1200) return;
+  const prev = t.current;
+  if (prev !== 'unknown') totals[prev] += Math.max(0, now - t.accountedAt) / 60000;
+  if (prev === 'sitting') sitMax = Math.max(sitMax, (now - t.activitySince) / 60000);
+  if (prev === 'sitting' && (next === 'standing' || next === 'walking')) {   // a sit-to-stand
+    standTimes.push(now); if (standTimes.length > 500) standTimes.shift();
+    repWaiters.forEach(w => w('stand_up'));
+  }
+  t.current = next; t.activitySince = now; t.accountedAt = now; t.pending = 'unknown';
+  persist(); renderTally();
+  log('posture', `เปลี่ยนเป็น${names[next]}`);
+}
+
+function updateFall(result, now) {
+  const t = person;
+  if (result.fallSignal && !t.fallSince) t.fallSince = now;
+  if (t.fallSince && now - t.fallSince > 5000) t.fallSince = 0;
+  const confirmed = t.fallSince && now - t.fallSince > 950 && result.type === 'low';
+  if (confirmed && now - t.lastFallAt > 30000) {
+    t.lastFallAt = now; t.fallSince = 0; fallCount++; persist(); renderTally(); raiseAlert('fall');
+  }
+}
+
+function trackMovement(l, now) {
+  const legs = [25, 26, 27, 28].filter(i => visible(l, i)).map(i => [i, l[i].x, l[i].y]);
+  if (prevLegs && legs.length >= 2) {
+    let sum = 0, n = 0;
+    for (const [i, x, y] of legs) { const p = prevLegs.find(q => q[0] === i); if (p) { sum += Math.hypot(x - p[1], y - p[2]); n++; } }
+    if (n && sum / n > .008) lastMoveAt = now;
+  }
+  prevLegs = legs;
+}
+
+function countMoves(l, now) {
+  if (!(visible(l, 15) && visible(l, 16) && visible(l, 11) && visible(l, 12))) return;
+  const lw = l[15], rw = l[16], ls = l[11], rs = l[12], shY = (ls.y + rs.y) / 2;
+  const headY = visible(l, 0) ? l[0].y : shY - 0.12;
+  if (armState === 'down' && lw.y < headY && rw.y < headY) { armState = 'up'; rep('arms_up'); }
+  else if (armState === 'up' && lw.y > shY && rw.y > shY) armState = 'down';
+  const width = Math.max(Math.hypot(ls.x - rs.x, ls.y - rs.y), .02), gap = Math.hypot(lw.x - rw.x, lw.y - rw.y) / width;
+  const belowHead = lw.y > headY && rw.y > headY;
+  if (clapState === 'apart' && gap < .35 && belowHead && now - lastClap > 300) { clapState = 'together'; lastClap = now; rep('clap'); }
+  else if (clapState === 'together' && gap > .7) clapState = 'apart';
+}
+function rep(move) {
+  if (move === 'arms_up') armCount++; else clapCount++;
+  persist(); renderTally();
+  repWaiters.forEach(w => w(move));
+}
+
+function drawPose(l, target, tctx) {
+  const links = [[11,12],[11,23],[12,24],[23,24],[11,13],[13,15],[12,14],[14,16],[23,25],[25,27],[24,26],[26,28],[27,31],[28,32]];
+  const W = target.width, H = target.height;
+  tctx.strokeStyle = tctx.fillStyle = '#9cc7ff'; tctx.lineWidth = Math.max(2, W / 230);
+  for (const [a, b] of links) { if (!visible(l, a) || !visible(l, b)) continue; tctx.beginPath(); tctx.moveTo(l[a].x * W, l[a].y * H); tctx.lineTo(l[b].x * W, l[b].y * H); tctx.stroke(); }
+  for (const i of [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]) if (visible(l, i)) { tctx.beginPath(); tctx.arc(l[i].x * W, l[i].y * H, Math.max(3, W / 150), 0, Math.PI * 2); tctx.fill(); }
+}
+
+// picture sent to the family while they watch: camera frame + skeleton + a caption
+const shareCv = document.createElement('canvas'); shareCv.width = 640; shareCv.height = 480;
+const shareCtx = shareCv.getContext('2d'); let shareOn = false, shareStream = null;
+function drawShare(l) {
+  if (!shareOn || !video.videoWidth) return;
+  // keep the camera's own shape (a phone held upright is portrait), at most 640 px on the long side
+  const vw = video.videoWidth, vh = video.videoHeight, sc = Math.min(1, 640 / Math.max(vw, vh)), W = Math.round(vw * sc), H = Math.round(vh * sc);
+  if (shareCv.width !== W || shareCv.height !== H) { shareCv.width = W; shareCv.height = H; }
+  shareCtx.drawImage(video, 0, 0, W, H);
+  if (l) drawPose(l, shareCv, shareCtx);
+  const cap = playing ? `${playing.current || playing.title}${playing.n > 1 ? ` · ท่า ${playing.i}/${playing.n}` : ''}` : (landmarker ? (names[person.current] || '') : '');
+  if (cap) { const fs = Math.max(16, Math.round(W / 28)); shareCtx.font = `bold ${fs}px sans-serif`; const w = shareCtx.measureText(cap).width + fs, h = fs * 1.7; shareCtx.fillStyle = 'rgba(0,0,0,.55)'; shareCtx.fillRect(10, 10, w, h); shareCtx.fillStyle = '#fff'; shareCtx.fillText(cap, 10 + fs / 2, 10 + fs * 1.15); }
+}
+
+function renderCam() {
+  const label = running ? (names[person.current] || names.unknown) : 'ยังไม่เริ่ม';
+  $('cameraActivity').textContent = label;
+  $('liveTag').textContent = running ? 'LIVE' : 'OFFLINE';
+  $('liveTag').classList.toggle('on', running);
+  $('gameHint').textContent = running ? 'กล้องเปิดอยู่ จะช่วยนับให้' : 'เปิดกล้องก่อน กล้องจะช่วยนับ';
+}
+
+function loop() {
+  if (!running) return;
+  if (video.readyState >= 2 && video.currentTime !== lastVideoTime) {
+    lastVideoTime = video.currentTime;
+    try {
+      const now = Date.now(), ts = Math.max(Math.floor(performance.now()), lastTaskTimestamp + 1); lastTaskTimestamp = ts;
+      const result = landmarker ? landmarker.detectForVideo(video, ts) : { landmarks: [] }, l = (result.landmarks || [])[0] || null;   // no model = camera only (still streams to the family)
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      lastLandmarks = l;
+      if (l) {
+        drawPose(l, canvas, ctx);
+        const pose = classify(l, now, person.frame); person.frame = pose.frame;
+        updateActivity(pose.type, now); updateFall(pose, now); trackMovement(l, now); countMoves(l, now);
+        $('confidence').textContent = 'เห็นคนในภาพ · ประมวลผลบนเครื่องนี้';
+      } else {
+        person.frame = null; prevLegs = null; updateActivity('unknown', now);
+        $('confidence').textContent = 'ไม่เห็นคนในภาพ';
+      }
+      drawShare(l); drawMiniCam();
+    } catch (error) { setStatus(`ประมวลผลภาพไม่สำเร็จ: ${error.message}`, true); stop(); return; }
+  }
+  renderCam();
+  frameHandle = requestAnimationFrame(loop);
+}
+
+const CAMERA_ERRORS = {
+  NotAllowedError: 'ไม่ได้รับอนุญาตให้ใช้กล้อง · กดไอคอนกล้อง/แม่กุญแจที่แถบที่อยู่ เลือก “อนุญาต” แล้วกดเริ่มตรวจจับอีกครั้ง (ถ้าเปิดในหน้าต่างพรีวิวของโปรแกรมอื่น ให้เปิดใน Chrome หรือ Edge แทน)',
+  SecurityError: 'มือถือจะเปิดกล้องได้ต้องเปิดหน้านี้แบบ https · กดปุ่ม “เปิดผ่าน https” ด้านล่าง แล้วกด “ขั้นสูง › ดำเนินการต่อ” ตอนเบราว์เซอร์เตือน (ในคอมเปิดผ่าน localhost ได้เลย)',
+  NotFoundError: 'ไม่พบกล้องในเครื่องนี้ · ตรวจว่าเสียบกล้องแล้ว และ Windows อนุญาตให้แอปใช้กล้อง (Settings › Privacy › Camera)',
+  NotReadableError: 'กล้องถูกโปรแกรมอื่นใช้อยู่ (เช่น Zoom, Teams, LINE หรือหน้านี้ที่เปิดซ้ำอีกแท็บ) · ปิดโปรแกรมนั้นแล้วลองใหม่',
+  AbortError: 'กล้องเริ่มทำงานไม่สำเร็จ · ลองถอดเสียบกล้องหรือรีสตาร์ตเบราว์เซอร์',
+};
+async function openCamera() {
+  try {
+    return await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+  } catch (e) {
+    if (e.name === 'OverconstrainedError' || e.name === 'NotFoundError') return navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    throw e;
+  }
+}
+async function start() {
+  if (running) return;
+  let modelNote = '';
+  const button = $('start'); button.disabled = true; button.textContent = 'กำลังเปิดกล้อง…';
+  try {
+    if (!window.isSecureContext) throw Object.assign(Error(), { name: 'SecurityError' });
+    if (!navigator.mediaDevices?.getUserMedia) throw Error('เบราว์เซอร์นี้ไม่รองรับกล้อง ให้เปิดใน Microsoft Edge หรือ Chrome');
+    setStatus('กำลังขอใช้กล้อง · กด “อนุญาต” เมื่อเบราว์เซอร์ถาม');
+    if (!stream) { stream = await openCamera(); video.srcObject = stream; }
+    button.textContent = 'กำลังเตรียม AI…';
+    if (!landmarker) {
+      setStatus('กำลังโหลดโมเดล AI (ครั้งแรกต้องใช้อินเทอร์เน็ต อาจใช้เวลาสักครู่)');
+      try {
+        const { FilesetResolver, PoseLandmarker } = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs');
+        const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+        const opts = delegate => ({
+          baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task', delegate },
+          runningMode: 'VIDEO', numPoses: 1, minPoseDetectionConfidence: .55, minPosePresenceConfidence: .5, minTrackingConfidence: .5,
+        });
+        try { landmarker = await PoseLandmarker.createFromOptions(vision, opts('GPU')); }
+        catch { landmarker = await PoseLandmarker.createFromOptions(vision, opts('CPU')); }
+      } catch (e) {
+        landmarker = null; modelNote = 'โหลดโมเดลตรวจจับท่าทางไม่สำเร็จ (ต้องใช้อินเทอร์เน็ต) แต่ยังส่งภาพให้ลูกหลานดูได้';   // keep the camera running without detection
+      }
+    }
+    await video.play();
+    if (!video.videoWidth) await new Promise(r => video.addEventListener('loadedmetadata', r, { once: true }));
+    canvas.width = video.videoWidth || 640; canvas.height = video.videoHeight || 480;
+    video.hidden = false; canvas.hidden = false; $('placeholder').hidden = true;
+    const now = Date.now();
+    person = { frame: null, current: 'unknown', pending: 'unknown', pendingSince: 0, activitySince: now, accountedAt: now, fallSince: 0, lastFallAt: 0 };
+    running = true; lastVideoTime = -1; lastTaskTimestamp = 0;
+    $('stop').disabled = false; button.textContent = 'เริ่มตรวจจับ';
+    setStatus(modelNote || 'กำลังตรวจจับ · ภาพประมวลผลบนอุปกรณ์นี้', !!modelNote);
+    log('camera', 'เปิดกล้องตรวจจับ', 'good');
+    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); await audioCtx.resume(); } catch {}
+    loop();
+  } catch (error) {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; video.srcObject = null; }
+    button.disabled = false; button.textContent = 'เริ่มตรวจจับ'; $('stop').disabled = true;
+    setStatus(`เริ่มไม่ได้: ${CAMERA_ERRORS[error.name] || error.message || error.name}`, true);
+  }
+  renderCam();
+}
+
+function stop() {
+  if (!running && !stream) return;
+  if (rtc.state !== 'idle' && rtc.mode === 'watch') rtc.hangup();
+  running = false; cancelAnimationFrame(frameHandle);
+  const now = Date.now();
+  if (person.current !== 'unknown' && now > person.accountedAt) { totals[person.current] += (now - person.accountedAt) / 60000; person.accountedAt = now; }
+  persist(); renderTally();
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; video.srcObject = null; video.hidden = true; canvas.hidden = true; $('placeholder').hidden = false;
+  $('stop').disabled = true; $('start').disabled = false; $('start').textContent = 'เริ่มตรวจจับ'; $('confidence').textContent = '—';
+  lastLandmarks = null;
+  setStatus('หยุดกล้องแล้ว · ข้อมูลสรุปเก็บในอุปกรณ์นี้');
+  log('camera', 'ปิดกล้อง');
+  renderCam();
+}
+
+// ---------- fall / SOS alert: shown here, sent to the family app ----------
+function raiseAlert(kind) {
+  stopGame();
+  alert = { id: Date.now(), kind, ts: Date.now(), status: 'open', by: null };
+  $('fallTitle').textContent = kind === 'fall' ? 'เป็นอะไรไหมคะ' : 'เรียกลูกหลานแล้วค่ะ';
+  $('fallText').textContent = kind === 'fall' ? 'กล้องเห็นว่าอาจล้ม · แจ้งลูกหลานแล้วค่ะ' : 'อยู่นิ่งๆ ก่อนนะคะ เดี๋ยวมีคนมาช่วย';
+  $('fallTime').textContent = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  $('responseMessage').textContent = '';
+  $('imOk').innerHTML = `${ic('check', 26)}${kind === 'fall' ? 'ฉันไม่เป็นไร' : 'ไม่เป็นไรแล้ว'}`;
+  $('fallAlert').hidden = false; chime(true);
+  say(kind === 'fall' ? 'เป็นอะไรไหมคะ ถ้าไม่เป็นไร แตะปุ่มสีเขียวนะคะ' : 'ส่งแจ้งเตือนถึงลูกหลานแล้วค่ะ รอสักครู่นะคะ');
+  log(kind, kind === 'fall' ? 'กล้องตรวจพบว่าอาจล้ม — แจ้งลูกหลานแล้ว' : 'กดปุ่มเรียกลูกหลาน', 'bad');
+  // escalation: nobody in the family answered for a minute -> point to 1669
+  clearTimeout(escalateT); const id = alert.id;
+  escalateT = setTimeout(() => {
+    if (!alert || alert.id !== id || alert.status !== 'open') return;
+    $('responseMessage').textContent = 'ยังไม่มีลูกหลานรับทราบ ถ้าต้องการความช่วยเหลือ แตะโทร 1669 ได้เลยค่ะ';
+    $('call1669').style.cssText = 'box-shadow:0 0 0 6px rgba(186,26,26,.3);transform:scale(1.04)';
+    chime(true); say('ยังไม่มีลูกหลานรับทราบค่ะ ถ้าต้องการความช่วยเหลือ แตะปุ่มโทร 1669 ได้เลยนะคะ');
+    log('escalate', 'ไม่มีใครรับทราบใน 1 นาที — แนะนำให้โทร 1669', 'bad');
+  }, 60000);
+}
+let escalateT = 0;
+$('imOk').onclick = () => {
+  if (!alert) { $('fallAlert').hidden = true; return; }
+  alert = { ...alert, status: 'resolved' }; clearTimeout(escalateT); $('call1669').style.cssText = '';
+  log('ok', 'กด “ฉันไม่เป็นไร”', 'good');
+  say('ดีใจที่ไม่เป็นอะไรค่ะ บอกลูกหลานให้แล้วนะคะ');
+  $('fallAlert').hidden = true;
+  setTimeout(() => { if (alert?.status === 'resolved') { alert = null; publish(); } }, 15000);
+};
+$('call1669').onclick = () => { log('call1669', 'กดโทร 1669 จากจอในบ้าน', 'bad'); };
+
+function askSos() {
+  if (alert && alert.status !== 'resolved') return;
+  openSheet(`<h2>${ic('alert', 30)}เรียกลูกหลาน</h2><p style="margin:0 0 4px;font-size:21px">ต้องการเรียกลูกหลานใช่ไหมคะ</p><p style="margin:0;color:var(--muted);font-size:16px">ลูกหลานจะได้รับแจ้งเตือนทันที</p>
+    <div class="two"><button class="btn s" id="sosNo" type="button">ไม่ใช่</button><button class="btn r" id="sosYes" type="button">ใช่ เรียกเลย</button></div>`);
+  say('ต้องการเรียกลูกหลานใช่ไหมคะ');
+  $('sosNo').onclick = () => { $('sheetBg').hidden = true; };
+  $('sosYes').onclick = () => { $('sheetBg').hidden = true; raiseAlert('sos'); };
+}
+$('sosBtn').onclick = askSos; $('navSos').onclick = askSos;
+
+// ================= video call + live share (WebRTC) =================
+const callUI = CARELY.mountCallUI({ ic, esc, local: () => rtc.localStream() });
+const photoOf = role => CARELY.avatar(role, ic('user', 70));
+let shareHideT = 0;
+function allowWatch() { return store.get('carely-allow-watch', '1') === '1'; }
+const rtc = CARELY.makeRtc({
+  role: 'elder',
+  send: m => bus.send(m),
+  myName: () => elderName(),
+  myPhoto: () => elderProfile().photo,
+  canWatch: () => running && allowWatch(),
+  getWatchStream: async () => { if (!running) return null; shareOn = true; shareStream = shareCv.captureStream(15); return shareStream; },
+  getCallStream: async () => { try { return await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true }); } catch (e) { toast(window.isSecureContext ? 'เปิดกล้องหรือไมค์สำหรับโทรไม่ได้' : 'โทรวิดีโอต้องเปิดผ่าน https หรือ localhost'); return null; } },
+  onIncoming: m => {
+    const name = m.name || familyProfile().name;
+    chime(); say(`${name}โทรวิดีโอมาค่ะ แตะปุ่มสีเขียวเพื่อรับสายนะคะ`);
+    callUI.incoming(name, m.photo ? `<img src="${m.photo}" alt="">` : photoOf('family'), () => { rtc.accept(); callUI.connecting(name); }, () => rtc.decline());
+  },
+  onRemote: (s, mode) => {
+    if (mode !== 'call') return;
+    callUI.inCall(familyProfile().name, () => rtc.hangup()); callUI.setRemote(s); callUI.setLocal(rtc.localStream());
+  },
+  onState: () => { const w = rtc.state === 'connected' && rtc.mode === 'watch';      // only while a picture is really being shared (not on every connection attempt)
+    clearTimeout(shareHideT); if (w) $('shareBar').hidden = false; else shareHideT = setTimeout(() => { $('shareBar').hidden = true; }, 2500);
+    publish(); },
+  onEnd: (mode, why) => {
+    callUI.hide(); shareOn = false; if (shareStream) { shareStream.getTracks().forEach(t => t.stop()); shareStream = null; }
+    $('shareBar').hidden = true;
+    if (mode === 'call') { const msg = { declined: 'ลูกหลานปฏิเสธสาย', busy: 'สายไม่ว่าง', noanswer: 'ไม่มีคนรับสาย', missed: 'พลาดสายที่โทรเข้า' }[String(why).split(':')[0]]; if (msg) toast(msg); }
+  },
+});
+function startCall() {
+  if (rtc.state !== 'idle') return;
+  rtc.call(); callUI.outgoing(familyProfile().name, photoOf('family'), () => rtc.hangup());
+  say(`กำลังโทรหา${familyProfile().name}ค่ะ`);
+}
+$('callBtn').onclick = startCall; $('navCall').onclick = startCall;
+$('shareStop').onclick = () => { if (rtc.mode === 'watch') rtc.hangup(); toast('หยุดแชร์ภาพแล้ว'); };
+
+// ---------- commands from the family app ----------
+function programCardHtml(offerBy) {
+  return `<div class="offer"><div class="head"><div class="ico">${ic(PROGRAM.icon, 40)}</div><div><h3>${esc(offerBy)} ชวนออกกำลังกาย</h3><p>${esc(PROGRAM.desc)}</p></div></div>
+    <div class="acts"><button class="btn p" id="offerYes" type="button">${ic('play', 22)}เริ่มเลย</button><button class="btn s" id="offerLater" type="button">ไว้ทีหลัง</button></div></div>`;
+}
+function renderInbox() {
+  const keep = $('inbox').querySelector('.note')?.outerHTML || '';
+  $('inbox').innerHTML = (pendingOffer && !playing ? programCardHtml(pendingOffer.by) : '') + keep;
+  if ($('offerYes')) {
+    $('offerYes').onclick = () => { pendingOffer = null; renderInbox(); startProgram(); };
+    $('offerLater').onclick = () => { log('game_skipped', 'ไว้ออกกำลังกายทีหลัง'); pendingOffer = null; say('ได้ค่ะ ไว้ออกกำลังกายกันทีหลังนะคะ'); renderInbox(); publish(); };
+  }
+}
+function showNote(html) {
+  const div = document.createElement('div'); div.className = 'offer note'; div.innerHTML = html;
+  $('inbox').querySelectorAll('.note').forEach(n => n.remove());
+  $('inbox').appendChild(div);
+  clearTimeout(showNote.t); showNote.t = setTimeout(() => div.remove(), 60000);
+}
+bus.on(m => {
+  if (m.type === '_relay') { lastExtra = 0; publish(); return; }
+  if (m.type === '_pair') { renderPairBar(); if (!sessionStorage.getItem('carely-pair-asked')) { sessionStorage.setItem('carely-pair-asked', '1'); showPairing(m); } return; }
+  if (m.type === 'frame' && m.img && m._from === 'elder') {          // picture sent by the phone camera (camera.html)
+    phoneImg = m.img; phoneTs = Date.now();
+    const pc = document.getElementById('phoneCam'); if (pc) pc.src = phoneImg; else camSlotUpdate();
+    return;
+  }
+  if (m._from !== 'family') return;
+  if (m.type === 'rtc') { if (m.to !== 'cctv') rtc.handle(m); return; }     // "cctv" = the family is watching the phone camera instead
+  if (m.type === 'ack' && alert && alert.status === 'open') {
+    alert = { ...alert, status: 'acked', by: m.by };
+    $('fallTitle').textContent = `${m.by} กำลังมาค่ะ`;
+    $('fallText').textContent = `${m.by} รับทราบแล้ว อยู่นิ่งๆ รอสักครู่นะคะ`;
+    $('fallAlert').hidden = false; chime();
+    say(`${m.by} รับทราบแล้ว กำลังมาค่ะ อยู่นิ่งๆ รอสักครู่นะคะ`);
+    log('ack', `${m.by} รับทราบ กำลังไป`, 'good');
+  } else if (m.type === 'game') {
+    if (playing) { bus.send({ type: 'busy' }); return; }
+    pendingOffer = { game: 'program', by: m.by };
+    renderInbox(); chime();
+    log('game_offer', `${m.by} ส่งโปรแกรมออกกำลังกายมาให้`);
+    if (soundUnlocked) {
+      // signal sound, then the voice leads the whole routine by itself (the steps are spoken one by one)
+      say(`${m.by}ส่งการออกกำลังกายมาให้ค่ะ เตรียมตัวนะคะ เรามาเริ่มกันเลย`);
+      clearTimeout(autoStartT);
+      autoStartT = setTimeout(() => { if (pendingOffer && !playing) { pendingOffer = null; renderInbox(); startProgram(); } }, 6500);
+    } else {
+      say(`${m.by}ชวนออกกำลังกายค่ะ แตะปุ่มเริ่มเลยนะคะ`);
+      toast('แตะหน้าจอหนึ่งครั้งเพื่อเปิดเสียง แล้วครั้งต่อไปจะพูดนำให้เองค่ะ');
+    }
+  } else if (m.type === 'message' && m.text) {
+    showNote(`<div class="head"><div class="ico">${ic('mail', 36)}</div><div><h3>ข้อความจาก ${esc(m.by)}</h3><p>${esc(m.text)}</p></div></div>`);
+    chime(); say(`ข้อความจาก${m.by}ค่ะ ${m.text}`);
+    log('message', `${m.by}: ${m.text}`);
+  } else if (m.type === 'call1669') {
+    log('call1669', `${m.by} กดโทร 1669 แล้ว`, 'bad');
+    if (alert && alert.status !== 'resolved') { $('responseMessage').textContent = `${m.by} กำลังโทรเรียกรถพยาบาล 1669`; say(`${m.by}กำลังโทรเรียกรถพยาบาลค่ะ อยู่นิ่งๆ นะคะ`); }
+  } else if (m.type === 'cam_request') {
+    if (!running && !$('start').disabled) { toast('ลูกหลานขอให้เปิดกล้อง'); start(); }
+  } else if (m.type === 'profile' && m.role === 'elder') {          // edited from the family app (e.g. on a phone)
+    CARELY.saveProfile('elder', m.name, m.photo === undefined ? undefined : m.photo);
+    paintAvatar(); greet(); lastExtra = 0; publish();
+  } else if (m.type === 'hello' || m.type === '_relay') { lastExtra = 0; publish(); }
+});
+
+// ================= exercise routine: three exercises one after another =================
+let playing = null, abortCtl = null;
+const sleep = ms => new Promise((resolve, reject) => {
+  const t = setTimeout(resolve, ms);
+  abortCtl?.signal.addEventListener('abort', () => { clearTimeout(t); reject(new DOMException('stopped', 'AbortError')); }, { once: true });
+});
+function waitRep(move, ms) {
+  return new Promise((resolve, reject) => {
+    const w = m => { if (m === move) done(true); };
+    const t = setTimeout(() => done(false), ms);
+    const stopIt = () => { clearTimeout(t); repWaiters.delete(w); reject(new DOMException('stopped', 'AbortError')); };
+    function done(seen) { clearTimeout(t); repWaiters.delete(w); abortCtl.signal.removeEventListener('abort', stopIt); resolve(seen); }
+    repWaiters.add(w);
+    abortCtl.signal.addEventListener('abort', stopIt, { once: true });
+  });
+}
+const cameraSeesPerson = () => running && !!lastLandmarks;
+
+// Camera picture shown while exercising: just the video, no motion-tracking lines.
+let phoneImg = '', phoneTs = 0;
+// while the exercise screen is open, keep asking the phone camera for pictures
+setInterval(() => { if (playing) bus.send({ type: 'frames_req' }); }, 2000);
+//      // when a picture from the phone camera (camera.html) last arrived
+function camSlotUpdate() {
+  const slot = document.getElementById('camSlot'); if (!slot) return;
+  let pc = document.getElementById('phoneCam');
+  if (Date.now() - phoneTs < 4000) {            // the phone is the camera: show its picture instead of this computer's webcam
+    if (!pc) { slot.innerHTML = '<img class="mini-cam" id="phoneCam" alt="ภาพจากกล้องมือถือ" style="transform:none;aspect-ratio:auto;max-height:55vh;object-fit:contain;width:auto;max-width:100%;min-height:200px">'; pc = document.getElementById('phoneCam'); pc.src = phoneImg; }
+    return;
+  }
+  if (pc) slot.innerHTML = '';
+  let mc = document.getElementById('miniCam');
+  if (!running) {
+    if (mc || !document.getElementById('camStartBtn')) {
+      slot.innerHTML = `<button class="btn s" id="camStartBtn" type="button">${ic('camera', 26)}เปิดกล้อง</button>`;
+      $('camStartBtn').onclick = async () => { $('camStartBtn').disabled = true; await start(); camSlotUpdate(); };
+    }
+    return;
+  }
+  if (!mc) { slot.innerHTML = '<canvas class="mini-cam" id="miniCam" width="480" height="360"></canvas>'; mc = document.getElementById('miniCam'); }
+  if (video.videoWidth) mc.getContext('2d').drawImage(video, 0, 0, mc.width, mc.height);
+}
+const drawMiniCam = camSlotUpdate;
+async function startProgram(ids = PROGRAM.ids) {
+  if (playing) return;
+  const list = ids.map(id => BY_ID[id]).filter(Boolean);
+  const single = list.length === 1;
+  playing = { id: single ? list[0].id : PROGRAM.id, title: single ? list[0].title : PROGRAM.title, current: '', i: 0, n: list.length };
+  abortCtl = new AbortController();
+  $('player').hidden = false; pendingOffer = null; renderInbox();
+  log('game_start', `เริ่ม${playing.title}`);
+  bus.send({ type: 'exercise', phase: 'start', title: playing.title, n: list.length });   // push to the family right away
+  const scores = [];
+  try {
+    for (let k = 0; k < list.length; k++) {
+      const ex = list[k]; playing.current = ex.title; playing.i = k + 1; publish();
+      $('gameTitle').innerHTML = `${ic(ex.icon, 34)}${list.length > 1 ? `ท่า ${k + 1}/${list.length} ` : ''}${esc(ex.title)}`;
+      const score = await runSteps(ex.steps);
+      gamesToday++; workouts.push({ id: ex.id, title: ex.title, ts: Date.now(), min: ex.minutes, score }); renderTally();
+      log('game_done', `ทำ${ex.title}จบแล้ว${score != null ? ` (ทำท่าได้ ${score}%)` : ''}`, 'good');
+      if (score != null) scores.push(score);
+      bus.send({ type: 'exercise', phase: 'step', title: ex.title, i: k + 1, n: list.length, score });
+    }
+    const avg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+    bus.send({ type: 'exercise', phase: 'done', title: playing.title, n: list.length, score: avg });
+    showDone(avg);
+  } catch (e) {
+    if (e.name !== 'AbortError') console.error(e);
+    log('game_skipped', `หยุด${playing ? playing.title : 'ออกกำลังกาย'}กลางคัน`);
+    bus.send({ type: 'exercise', phase: 'stop', title: playing ? playing.title : '' });
+    speechSynthesis?.cancel(); closePlayer();
+  }
+}
+function stopGame() { if (playing) abortCtl?.abort(); }
+function closePlayer() { playing = null; $('player').hidden = true; publish(); }
+
+async function runSteps(steps) {
+  const body = $('gameBody');
+  body.innerHTML = `<div class="step-ico" id="stIcon"></div><p class="lead" id="stSay"></p>
+    <div class="counter" id="stCount"></div><div class="bar"><i id="stBar"></i></div>
+    <div class="motion-hint" id="stHint"></div><div class="cam-slot" id="camSlot"></div>`; camSlotUpdate();
+  const icon = $('stIcon'), text = $('stSay'), count = $('stCount'), bar = $('stBar'), hint = $('stHint');
+  const pop = () => { icon.classList.add('pop'); setTimeout(() => icon.classList.remove('pop'), 180); };
+  const parts = [];
+  for (const step of steps) {
+    icon.innerHTML = ic(step.icon, 96); text.textContent = step.say; count.textContent = ''; hint.textContent = ''; hint.className = 'motion-hint';
+    bar.style.width = '0'; pop(); say(step.say);
+    await sleep(2200);
+    if (step.reps && step.detect && running) {
+      let got = 0;
+      const deadline = Date.now() + step.reps * step.beat * 3000;
+      count.textContent = `0 / ${step.reps}`;
+      hint.textContent = 'กล้องกำลังนับให้ค่ะ'; hint.className = 'motion-hint ok';
+      while (got < step.reps && Date.now() < deadline) {
+        if (await waitRep(step.detect, Math.min(12000, deadline - Date.now()))) {
+          got++; count.textContent = `${got} / ${step.reps}`; bar.style.width = `${(100 * got) / step.reps}%`;
+          hint.textContent = 'เห็นแล้วค่ะ เยี่ยมเลย'; hint.className = 'motion-hint ok';
+          pop(); say(TH_NUM[got - 1] || String(got), true);
+        } else { hint.textContent = REP_HINT[step.detect]; hint.className = 'motion-hint'; say(REP_HINT[step.detect], true); }
+      }
+      parts.push(got / step.reps);
+    } else if (step.reps) {
+      for (let r = 1; r <= step.reps; r++) {
+        count.textContent = `${r} / ${step.reps}`; bar.style.width = `${(100 * r) / step.reps}%`;
+        pop(); say(TH_NUM[r - 1] || String(r), true);
+        await sleep(step.beat * 1000);
+      }
+    } else if (step.motion) {
+      let got = 0, elapsed = 0;
+      while (got < step.seconds && elapsed < step.seconds * 2.5) {
+        await sleep(1000); elapsed++;
+        const moving = running ? (cameraSeesPerson() && Date.now() - lastMoveAt < 1200) : true;
+        if (moving) { got++; hint.textContent = 'เยี่ยมเลย กำลังขยับ'; hint.className = 'motion-hint ok'; }
+        else { hint.textContent = 'ขยับอีกนิดนะคะ ยังไม่เห็นการขยับ'; hint.className = 'motion-hint'; }
+        bar.style.width = `${(100 * got) / step.seconds}%`;
+        count.textContent = `${Math.max(0, step.seconds - got)} วินาที`;
+        if (elapsed % 12 === 0) say(pick(CHEER), true);
+      }
+      if (running) parts.push(got / elapsed);
+    } else if (step.seconds) {
+      for (let s = step.seconds; s > 0; s--) {
+        count.textContent = s; bar.style.width = `${(100 * (step.seconds - s + 1)) / step.seconds}%`;
+        await sleep(1000);
+      }
+    }
+  }
+  return parts.length ? Math.round((100 * parts.reduce((a, b) => a + b, 0)) / parts.length) : null;
+}
+
+function showDone(score) {
+  let text = 'ได้ขยับร่างกายแล้ว สดชื่นขึ้นเยอะเลย', stars = '';
+  if (score != null) { text = `ทำท่าได้ ${score}% ของที่ตั้งไว้`; stars = Array.from({ length: Math.max(1, Math.round(score / 20)) }, () => ic('star', 44)).join(''); }
+  $('gameBody').innerHTML = `<div class="step-ico">${ic('award', 96)}</div><p class="lead">เก่งมากค่ะ</p><p style="font-size:22px;margin:0 0 10px">${esc(text)}</p><div class="stars">${stars}</div>`;
+  chime(); say(`เก่งมากค่ะ ${text} อย่าลืมดื่มน้ำด้วยนะคะ`);
+  const finished = playing;
+  setTimeout(() => { if (playing === finished) closePlayer(); }, 7000);
+}
+$('gameStop').onclick = () => { stopGame(); say('ไม่เป็นไรค่ะ พักก่อนนะคะ'); closePlayer(); };
+
+// ================= demo tools & sit reminder =================
+function simBathroom() { bathSensor = true; bathTimes.push(Date.now()); persist(); log('bathroom', 'เข้าห้องน้ำ (เซนเซอร์จำลอง)'); renderTally(); }
+function loadSampleToday() {
+  const s = CARELY.sample(), d = s.days[0];
+  totals = { sitting: d.sitMin, standing: Math.round(d.standMin * 0.6), walking: Math.round(d.standMin * 0.4), low: d.lieMin };
+  fallCount = d.falls; standTimes = d.standTimes.slice(); bathTimes = d.bathTimes.slice(); bathSensor = true; sitMax = d.sitMax;
+  workouts = d.workouts.slice(); gamesToday = workouts.length; armCount = 24; clapCount = 18;
+  events = s.notifs.map(n => ({ ts: n.ts, kind: n.kind, text: n.title, level: n.level })).sort((a, b) => b.ts - a.ts);
+  persist(); publish(); renderTally();
+}
+function clearToday() {
+  totals = { sitting: 0, standing: 0, walking: 0, low: 0 }; fallCount = armCount = clapCount = gamesToday = sitMax = 0;
+  events = []; standTimes = []; bathTimes = []; workouts = []; bathSensor = false; alert = null; persist(); publish(); renderTally();
+}
+let lastNudgeAt = 0;
+setInterval(() => {
+  if (!running || person.current !== 'sitting' || playing || pendingOffer || (alert && alert.status !== 'resolved')) return;
+  const mins = (Date.now() - person.activitySince) / 60000, lim = CARELY.sitLimit();
+  if (mins >= lim && Date.now() - lastNudgeAt > lim * 60000) {
+    lastNudgeAt = Date.now(); sitMax = Math.max(sitMax, mins);
+    pendingOffer = { game: 'program', by: 'LookLens' }; renderInbox(); chime();
+    say(`นั่งมานาน ${Math.round(mins)} นาทีแล้วนะคะ ลุกออกกำลังกายสักหน่อยไหมคะ`);
+    log('nudge', `แจ้งเตือนให้ลุกเดิน · นั่งต่อเนื่อง ${Math.round(mins)} นาที`, 'warn');
+  }
+}, 15000);
+
+// ================= pairing (a phone must pair once with the PC's 6-digit code) =================
+function renderPairBar() {
+  let bar = $('pairBar');
+  if (!bar) { bar = document.createElement('div'); bar.id = 'pairBar'; bar.className = 'sharebar'; bar.style.cssText = 'background:#ffe9e6;color:#8a2a22'; $('viewHome').insertBefore(bar, $('viewHome').children[2]); }
+  bar.hidden = !bus.needPair;
+  bar.innerHTML = `${ic('alert', 24)}<span>ยังไม่ได้จับคู่กับคอม ลูกหลานจึงยังดูภาพไม่ได้</span><button type="button" id="pairBarBtn">จับคู่</button>`;
+  $('pairBarBtn').onclick = () => showPairing({ open: true });
+}
+function showPairing(m) {
+  const full = m && m.open === false;
+  openSheet(`<h2>${ic('alert', 30)}จับคู่กับคอม</h2>
+    ${full ? `<p style="font-size:19px;margin:0">คอมเครื่องนี้จับคู่กับมือถือไว้แล้ว 1 เครื่อง ถ้าจะเปลี่ยนมือถือ ให้รัน <b>py server.py --reset-pairing</b> บนคอม</p><button class="btn s" id="pinClose" type="button" style="margin-top:14px">ปิด</button>`
+    : `<p style="margin:0 0 6px;font-size:18px">ใส่รหัส 6 หลักที่แสดงในหน้าต่างสีดำบนคอม (ทำครั้งเดียว)</p>
+    <input id="pinIn" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="รหัส 6 หลัก" style="font-size:30px;letter-spacing:.3em;text-align:center">
+    <p id="pinMsg" style="margin:8px 0 0;color:var(--red);font-weight:700;min-height:24px"></p>
+    <div class="two"><button class="btn s" id="pinClose" type="button">ไว้ทีหลัง</button><button class="btn p" id="pinGo" type="button">จับคู่</button></div>`}`);
+  $('pinClose').onclick = closeSheet;
+  if (full) return;
+  const go = async () => {
+    const r = await bus.pair($('pinIn').value);
+    if (r.ok) { closeSheet(); toast('จับคู่สำเร็จ'); const b = $('pairBar'); if (b) b.hidden = true; return; }
+    $('pinMsg').textContent = { 'wrong-pin': 'รหัสไม่ถูกต้อง', 'android-only': 'จับคู่ได้เฉพาะโทรศัพท์แอนดรอย', full: 'จับคู่ครบแล้ว', locked: `ลองผิดหลายครั้ง รออีก ${r.wait || 60} วินาที`, network: 'ติดต่อคอมไม่ได้ ตรวจว่าเชื่อมต่อกันอยู่' }[r.error] || 'จับคู่ไม่สำเร็จ';
+  };
+  $('pinGo').onclick = go; $('pinIn').onkeydown = e => { if (e.key === 'Enter') go(); };
+  $('pinIn').focus();
+}
+// the phone's camera needs https; offer the https link of this same page
+if (!window.isSecureContext && location.protocol === 'http:') { const b = $('httpsBtn'); b.href = `https://${location.hostname}:8443${location.pathname}${location.search}`; b.hidden = false; }
+
+// ================= profile & settings =================
+function openSheet(html) { $('sheet').innerHTML = html; fillIcons($('sheet')); $('sheetBg').hidden = false; }
+const closeSheet = () => { $('sheetBg').hidden = true; };
+$('sheetBg').onclick = e => { if (e.target === $('sheetBg')) closeSheet(); };
+$('btnProfile').onclick = () => {
+  let photo;                                    // undefined = unchanged, null = remove, string = new
+  const p = elderProfile();
+  openSheet(`<h2>${ic('user', 30)}โปรไฟล์ของฉัน</h2>
+    <div class="photo-row"><div class="photo-prev" id="pPrev">${CARELY.avatar('elder', ic('user', 52))}</div><div style="flex:1;display:grid;gap:8px"><button class="btn s small" id="pPick" type="button">${ic('image', 22)}เลือกรูป</button><button class="btn s small" id="pDel" type="button">ลบรูป</button></div></div>
+    <p style="margin:8px 0 0;font-size:14px;color:var(--muted)">เลือกรูปจากโฟลเดอร์ Final Face หรือรูปอื่นในเครื่อง รูปเก็บไว้ในเครื่องนี้เท่านั้น</p>
+    <label for="pName">ชื่อ</label><input id="pName" value="${esc(p.name)}" maxlength="30">
+    <div class="two"><button class="btn s" id="pClose" type="button">ยกเลิก</button><button class="btn p" id="pSave" type="button">บันทึก</button></div>`);
+  $('pPick').onclick = () => $('photoFile').click();
+  $('photoFile').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; try { photo = await CARELY.readPhoto(f); $('pPrev').innerHTML = `<img src="${photo}" alt="" style="width:100%;height:100%;object-fit:cover">`; } catch { toast('อ่านรูปไม่ได้ ลองรูปอื่น'); } };
+  $('pDel').onclick = () => { photo = null; $('pPrev').innerHTML = ic('user', 52); };
+  $('pClose').onclick = closeSheet;
+  $('pSave').onclick = () => { CARELY.saveProfile('elder', $('pName').value, photo); closeSheet(); paintAvatar(); greet(); publish(); toast('บันทึกโปรไฟล์แล้ว'); };
+};
+$('btnSettings').onclick = () => {
+  openSheet(`<h2>${ic('settings', 30)}ตั้งค่า</h2>
+  <label for="sLimit">เตือนให้ลุกเมื่อนั่งต่อเนื่องเกิน (นาที)</label><input id="sLimit" type="number" min="1" max="240" value="${CARELY.sitLimit()}">
+  <div class="line"><span>ให้ลูกหลานดูภาพสดจากกล้องได้</span><button class="btn s small" id="sWatch" type="button">${allowWatch() ? 'เปิดอยู่' : 'ปิดอยู่'}</button></div>
+  <div class="line"><span>แจ้งเตือนบนอุปกรณ์</span><button class="btn s small" id="sNotify" type="button">เปิด</button></div>
+  <label>โหมดสาธิต (ไม่มีเซนเซอร์จริง)</label>
+  <div class="demo-grid">
+    <button class="btn s" id="dBath" type="button">${ic('dot', 20)}จำลองเข้าห้องน้ำ</button>
+    <button class="btn s" id="dFall" type="button">${ic('alert', 20)}จำลองล้ม</button>
+    <button class="btn s" id="dLoad" type="button">${ic('award', 20)}โหลดข้อมูลตัวอย่าง</button>
+    <button class="btn s" id="dClear" type="button">${ic('stop', 20)}ล้างข้อมูลวันนี้</button>
+  </div>
+  <button class="btn p" id="sSave" type="button" style="margin-top:16px">บันทึก</button>`);
+  $('dBath').onclick = () => { simBathroom(); toast(`บันทึกเข้าห้องน้ำแล้ว (วันนี้ ${bathTimes.length} ครั้ง)`); };
+  $('dFall').onclick = () => { closeSheet(); raiseAlert('fall'); fallCount++; persist(); renderTally(); };
+  $('dLoad').onclick = () => { loadSampleToday(); closeSheet(); toast('โหลดข้อมูลตัวอย่างของวันนี้แล้ว'); };
+  $('dClear').onclick = () => { clearToday(); closeSheet(); toast('ล้างข้อมูลวันนี้แล้ว'); };
+  $('sWatch').onclick = () => { store.set('carely-allow-watch', allowWatch() ? '0' : '1'); $('sWatch').textContent = allowWatch() ? 'เปิดอยู่' : 'ปิดอยู่'; if (!allowWatch() && rtc.mode === 'watch') rtc.hangup(); };
+  $('sNotify').onclick = async () => {
+    if (!('Notification' in window)) { toast('เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน'); return; }
+    try { const r = await Notification.requestPermission(); toast(r === 'granted' ? 'เปิดการแจ้งเตือนบนอุปกรณ์แล้ว' : 'ไม่ได้เปิดการแจ้งเตือน'); } catch { toast('เปิดการแจ้งเตือนไม่สำเร็จ'); }
+  };
+  $('sSave').onclick = () => { store.set('carely-sit-limit', String(Math.max(1, Math.min(240, +$('sLimit').value || 60)))); closeSheet(); toast('บันทึกแล้ว'); };
+};
+
+// ================= views =================
+// The camera page is gone: the phone camera is camera.html now. (#viewCam stays in the page, always hidden, because the in-game camera still uses its video element.)
+let view = 'home';
+function showView() {
+  $('viewHome').hidden = false; $('viewCam').hidden = true;
+  $('pageName').textContent = 'จอในบ้าน';
+  document.querySelectorAll('#nav button[data-go]').forEach(b => b.classList.toggle('on', b.dataset.go === 'home'));
+}
+document.querySelectorAll('#nav button[data-go]').forEach(b => { b.onclick = () => { location.hash = ''; showView(); window.scrollTo(0, 0); }; });
+window.addEventListener('hashchange', showView);
+
+// ================= start =================
+function greet() {
+  const h = new Date().getHours();
+  $('hello').textContent = `${h < 11 ? 'สวัสดีตอนเช้า' : h < 16 ? 'สวัสดีตอนบ่าย' : 'สวัสดีตอนเย็น'}ค่ะ ${elderName()}`;
+}
+$('prog').innerHTML = PROGRAM.ids.map(id => { const g = BY_ID[id]; return `<div class="st">${ic(g.icon, 46)}<b>${esc(g.title)}</b><small>${esc(g.amount)}</small></div>`; }).join('');
+$('startProgram').innerHTML = `${ic('play', 26)}เริ่มออกกำลังกาย`;
+$('startProgram').onclick = () => startProgram();
+$('start').onclick = start; $('stop').onclick = stop;
+window.addEventListener('pagehide', () => { if (rtc.state !== 'idle') rtc.hangup(); stop(); });
+greet(); showView();
+loadDay(); renderTally(); renderCam();
+publish(); setInterval(publish, 1000);
+// Opened with ?game=... : run the routine (or one exercise) right away.
+{ const q = new URLSearchParams(location.search).get('game'); if (q) setTimeout(() => startProgram(BY_ID[q] ? [q] : PROGRAM.ids), 400); }
+</script>
+</body>
+</html>

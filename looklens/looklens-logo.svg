@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="LookLens">
+  <rect width="900" height="300" fill="#eef5ff"/>
+  <g font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="150" fill="#0b3a78">
+    <text x="50" y="205">L</text>
+    <text x="348" y="205">k</text>
+    <text x="432" y="205">L</text>
+    <text x="518" y="205" fill="#1d63c9">ens</text>
+  </g>
+  <!-- the two o's become a pair of glasses: left lens = care (heart), right lens = watching over (eye) -->
+  <g transform="translate(16,0)">
+    <circle cx="152" cy="158" r="44" fill="#bfe0ff" stroke="#0b3a78" stroke-width="12"/>
+    <circle cx="270" cy="158" r="44" fill="#bfe0ff" stroke="#0b3a78" stroke-width="12"/>
+    <!-- bridge -->
+    <path d="M194 148 Q211 132 228 148" fill="none" stroke="#0b3a78" stroke-width="11" stroke-linecap="round"/>
+    <!-- heart (care) -->
+    <path d="M152 183 C128 166 130 142 144 140 C150 139 152 144 152 146 C152 144 154 139 160 140 C174 142 176 166 152 183 Z" fill="#ba1a1a"/>
+    <!-- eye (watching) -->
+    <path d="M247 158 Q270 134 293 158 Q270 182 247 158 Z" fill="#fff" stroke="#0b3a78" stroke-width="5" stroke-linejoin="round"/>
+    <circle cx="270" cy="158" r="11" fill="#0b3a78"/>
+    <circle cx="274" cy="154" r="4" fill="#fff"/>
+    <!-- lens glint -->
+    <path d="M122 140 A34 34 0 0 1 138 124" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+    <path d="M240 140 A34 34 0 0 1 256 124" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".0"/>
+  </g>
+  <text x="52" y="262" font-family="'Segoe UI','Leelawadee UI',Arial,sans-serif" font-size="26" font-weight="600" fill="#62707f" letter-spacing="1">มองดูแล ใส่ใจทุกการเคลื่อนไหว</text>
+</svg>

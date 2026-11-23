@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carely กล้อง</title>
+<link rel="icon" href="/static/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/carely.css">
+<style>
+  nav { height: 68px; background: var(--white); display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 max(16px, calc((100% - 1200px) / 2)); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+  nav a { color: var(--sage-dark); text-decoration: none; font-weight: 600; font-size: 14px; }
+  .nav-right { display: flex; gap: 14px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+  main { max-width: 1200px; margin: auto; padding: 24px 16px 64px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -.4px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+  .card h2 { font-size: 18px; margin: 0 0 12px; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  .stack { display: grid; gap: 18px; }
+
+  .consent ul { margin: 0 0 12px; padding-left: 20px; }
+  .consent li { margin: 3px 0; }
+  .consent label { display: flex; gap: 10px; align-items: flex-start; margin-top: 8px; font-size: 15px; }
+  .consent input { margin-top: 5px; width: 18px; height: 18px; }
+
+  .stage { position: relative; aspect-ratio: 1; width: 100%; max-width: 520px; margin: 0 auto; background: #23272a; border-radius: 14px; overflow: hidden; display: grid; place-items: center; }
+  .stage canvas { width: 100%; height: 100%; transform: scaleX(-1); display: block; }
+  .stage .placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #cfd4cf; text-align: center; padding: 24px; font-size: 15px; }
+  .live { position: absolute; top: 12px; left: 12px; background: var(--red); color: #fff; border-radius: 50px; padding: 4px 12px; font-size: 13px; font-weight: 700; display: flex; gap: 6px; align-items: center; }
+  .live .dot { animation: blink 1.2s infinite; }
+  @keyframes blink { 50% { opacity: .2; } }
+  .pose-tag { position: absolute; bottom: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .pose-tag span { background: rgba(255, 255, 255, .92); border-radius: 12px; padding: 6px 12px; font-weight: 700; }
+  .pose-tag .fall { background: var(--red); color: #fff; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+  .status { margin-top: 12px; padding: 10px 14px; border-radius: 12px; background: var(--paper); font-size: 15px; }
+  .status.bad { background: var(--red-pale); color: var(--red); }
+  .status.ok { background: var(--sage-pale); color: var(--sage-dark); }
+
+  .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .tile { background: var(--paper); border-radius: 14px; padding: 12px 14px; }
+  .tile small { color: var(--muted); display: block; font-size: 13px; }
+  .tile strong { font-size: 26px; line-height: 1.2; }
+  .meter { height: 10px; background: var(--sage-pale); border-radius: 10px; overflow: hidden; margin-top: 6px; }
+  .meter i { display: block; height: 100%; width: 0; background: var(--sage); transition: width .3s; }
+  .probs { display: grid; gap: 6px; margin-top: 14px; font-size: 14px; }
+  .probs div { display: grid; grid-template-columns: 52px 1fr 40px; gap: 8px; align-items: center; }
+  .probs .meter { margin: 0; }
+  .probs b { text-align: right; font-weight: 600; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  td:last-child, th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .note { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+  .limits { margin-top: 18px; }
+  .limits ul { margin: 0; padding-left: 20px; color: var(--muted); }
+  code { background: var(--paper); border-radius: 6px; padding: 1px 6px; font-size: 13px; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Care<span>ly</span> <small style="font-size:15px;color:var(--muted);font-weight:600">กล้อง</small></div>
+  <div class="nav-right">
+    <span class="chip off" id="linkChip"><span class="dot"></span> ยังไม่ส่งข้อมูล</span>
+    <a href="/">หน้าลูกหลาน</a>
+    <a href="/elder">หน้าจอในบ้าน</a>
+  </div>
+</nav>
+
+<main>
+  <h1>📷 กล้องตรวจจับการเคลื่อนไหว</h1>
+  <p class="sub">ดูท่าทาง (ยืน นั่ง นอน ล้ม) และนับท่าในเกม "ยกแขนแตะฟ้า" กับ "ปรบมือ" จากจุดร่างกายโดยประมาณ</p>
+
+  <div class="grid">
+    <div class="stack">
+      <section class="card consent" id="consent">
+        <h2>ก่อนเปิดกล้อง</h2>
+        <ul>
+          <li><b>ใช้กล้องทำอะไร:</b> หาจุดร่างกายโดยประมาณ 17 จุด แล้วบอกท่าทาง การขยับ และนับท่ายกแขน/ปรบมือ</li>
+          <li><b>ประมวลผลที่ไหน:</b> ในเบราว์เซอร์เครื่องนี้เท่านั้น ภาพไม่ถูกส่งออกจากเครื่อง (ต้องต่ออินเทอร์เน็ตตอนเปิดครั้งแรกเพื่อโหลดตัวโมเดล)</li>
+          <li><b>เก็บอะไร:</b> ไม่บันทึกภาพ วิดีโอ หรือเสียง ส่งเข้าระบบ Carely เพียง ท่าทาง · ระดับการขยับ · มีคนหรือไม่ · สงสัยล้ม · การนับท่า (วินาทีละครั้ง)</li>
+          <li><b>เก็บนานเท่าไร:</b> สรุปในหน้านี้อยู่ในหน่วยความจำจนกว่าจะกด "ล้างข้อมูล" หรือปิดหน้า ส่วนเหตุการณ์ (เปลี่ยนท่า ล้ม ผลเกม) ถูกบันทึกในฐานข้อมูล Carely เหมือนข้อมูลจากเรดาร์</li>
+          <li><b>หยุดอย่างไร:</b> กด "หยุดกล้อง" ได้ทุกเมื่อ ไฟสีแดง "กล้องทำงาน" จะดับทันที</li>
+        </ul>
+        <p class="note" style="margin-top:0">ก่อนเริ่ม: ตั้งกล้องให้เห็นทั้งตัว ห่างประมาณ 2–3 เมตร หันออกจากกระจกและหน้าต่างที่แสงย้อน และระวังไม่ให้มีคนอื่นหรือพื้นที่ส่วนตัวอยู่ในภาพ</p>
+        <label><input type="checkbox" id="agree"> เข้าใจและยินยอมให้เปิดกล้องบนเครื่องนี้</label>
+        <label><input type="checkbox" id="sendToCarely" checked> ส่งท่าทาง การขยับ และการนับท่า เข้าระบบ Carely (ใช้แจ้งเตือนการล้มและนับท่าในเกม)</label>
+      </section>
+
+      <section class="card">
+        <div class="stage" id="stage">
+          <canvas id="view" width="360" height="360" aria-label="ภาพจากกล้องพร้อมจุดร่างกาย"></canvas>
+          <div class="placeholder" id="placeholder">กล้องปิดอยู่<br>ติ๊กยินยอมด้านบน แล้วกด "เปิดกล้อง"</div>
+          <div class="live" id="live" hidden><span class="dot"></span> กล้องทำงาน</div>
+          <div class="pose-tag" id="poseTag" hidden><span id="poseNow">–</span><span id="presenceNow">–</span></div>
+        </div>
+        <div class="controls">
+          <button class="primary" id="startBtn" disabled>▶️ เปิดกล้อง</button>
+          <button class="danger" id="stopBtn" hidden>⏹ หยุดกล้อง</button>
+          <select id="cameraPick" hidden aria-label="เลือกกล้อง"></select>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite">สถานะ: กล้องปิดอยู่ ยังไม่ได้ขอสิทธิ์ใช้กล้อง</div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="card">
+        <h2>ตอนนี้</h2>
+        <div class="tiles">
+          <div class="tile"><small>ท่าทาง</small><strong id="tPose">–</strong></div>
+          <div class="tile"><small>การขยับ (0–100)</small><strong id="tEnergy">–</strong><div class="meter"><i id="tEnergyBar"></i></div></div>
+          <div class="tile"><small>🙌 ยกแขนแตะฟ้า</small><strong id="tArms">0</strong> <small style="display:inline">ครั้ง</small></div>
+          <div class="tile"><small>👏 ปรบมือ</small><strong id="tClaps">0</strong> <small style="display:inline">ครั้ง</small></div>
+        </div>
+        <div class="probs" id="probs"></div>
+        <p class="note">ความน่าจะเป็นของแต่ละท่ามาจากโมเดล my-pose-model (Teachable Machine) ท่าที่แสดงคือท่าที่ชนะเกินครึ่งในช่วงประมาณ 1 วินาทีล่าสุด</p>
+      </section>
+
+      <section class="card">
+        <h2>สรุปรอบนี้</h2>
+        <table>
+          <tbody id="summary">
+            <tr><td colspan="2" style="color:var(--muted)">ยังไม่มีข้อมูล</td></tr>
+          </tbody>
+        </table>
+        <div class="controls">
+          <button class="ghost" id="exportJson" disabled>⬇️ ส่งออก JSON</button>
+          <button class="ghost" id="exportCsv" disabled>⬇️ ส่งออก CSV</button>
+          <button class="ghost" id="clearBtn" disabled>🗑 ล้างข้อมูล</button>
+        </div>
+        <p class="note">ไฟล์ส่งออกมีเฉพาะค่าวินาทีละแถว: <code>t</code> วินาทีนับจากเริ่ม · <code>presence</code> · <code>posture</code> · <code>confidence</code> · <code>moving_energy</code> · <code>fall</code> · <code>arms_up</code> · <code>clap</code> (JSON มีรายการนับท่า <code>{t, move}</code> เพิ่ม) ไม่มีภาพหรือพิกัดจุดร่างกาย</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="card limits">
+    <h2>ข้อจำกัด</h2>
+    <ul>
+      <li>เป็นต้นแบบสำหรับสาธิต ไม่ใช่เครื่องมือทางการแพทย์ ไม่ได้วินิจฉัยหรือประเมินสุขภาพ</li>
+      <li>ผลขึ้นกับแสง มุมกล้อง ระยะ เสื้อผ้า และสิ่งของที่บังตัว ยังไม่ได้วัดความแม่นยำกับกลุ่มผู้ทดสอบ</li>
+      <li>โมเดลท่าทางฝึกจากตัวอย่างจำนวนน้อย ควรฝึกเพิ่มด้วยภาพจากห้องและมุมกล้องที่ใช้จริง</li>
+      <li>ออกแบบให้ดูคนเดียวในภาพ ถ้ามีหลายคนจะใช้คนที่เห็นชัดที่สุด</li>
+      <li>เปิดกล้องได้เฉพาะผ่าน <code>localhost</code> หรือ HTTPS (ข้อกำหนดของเบราว์เซอร์)</li>
+    </ul>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8.6/dist/teachablemachine-pose.min.js"></script>
+<script src="/static/camera.js"></script>
+</body>
+</html>

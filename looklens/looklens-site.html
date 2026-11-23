@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LookLens · กล้องตรวจจับการล้มและดูแลผู้สูงอายุ</title>
+<meta name="description" content="LookLens ใช้กล้องมือถือตรวจจับการล้ม แจ้งลูกหลานทันที พร้อมติดตามกิจกรรม ชวนออกกำลังกาย และวิดีโอคอล">
+<style>
+:root{--ink:#141c28;--ink2:#3a4656;--muted:#62707f;--line:#d3dfee;--bg:#eef5ff;--card:#fff;--p:#0b3a78;--p2:#1d63c9;--mint:#bfe0ff;--sage:#cfe3ff;--red:#ba1a1a;--redp:#ffdad6;--amber:#9d712c;--shadow:0 10px 30px rgba(16,45,100,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Leelawadee UI","Noto Sans Thai","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65;font-size:17px}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:20;background:rgba(238,245,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav img{height:60px;display:block;mix-blend-mode:multiply;margin:-6px 0}
+.nav nav{display:flex;gap:22px;font-weight:700;font-size:15px}.nav nav a{text-decoration:none;color:var(--ink2)}.nav nav a:hover{color:var(--p)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:14px 26px;font:800 16px inherit;font-family:inherit;background:var(--p);color:#fff;text-decoration:none;cursor:pointer}
+.btn.alt{background:#fff;color:var(--p);border:2px solid var(--p)}
+.btn:hover{background:var(--p2)}.btn.alt:hover{background:var(--sage)}
+.hero{padding:64px 0 40px;display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+.chip{display:inline-block;background:var(--sage);color:var(--p);font-weight:800;font-size:14px;border-radius:999px;padding:5px 14px}
+h1{font-size:clamp(32px,5vw,52px);line-height:1.2;margin:14px 0 14px;color:var(--p)}
+.lead{font-size:19px;color:var(--ink2);max-width:520px}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.mock{background:var(--card);border-radius:28px;box-shadow:var(--shadow);padding:18px;border:1px solid var(--line);max-width:380px;margin-left:auto;width:100%}
+.mock .cam{aspect-ratio:3/4;border-radius:20px;background:linear-gradient(160deg,#17253a,#0b1422);position:relative;overflow:hidden;display:grid;place-items:center}
+.mock .cam svg{width:62%}
+.tag{position:absolute;top:12px;left:12px;background:#fff;color:var(--p);font-weight:800;font-size:13px;border-radius:999px;padding:4px 12px;display:flex;gap:6px;align-items:center}
+.tag i{width:8px;height:8px;border-radius:50%;background:var(--p2);animation:b 1.6s infinite}@keyframes b{50%{opacity:.25}}
+.alert{margin-top:14px;background:var(--redp);color:#8a2a22;border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;font-weight:700;font-size:15px}
+.alert b{display:block;font-size:16px}
+section{padding:56px 0}
+h2{font-size:clamp(26px,3.6vw,36px);color:var(--p);margin:0 0 8px;line-height:1.25}
+.sub{color:var(--muted);margin:0 0 30px;max-width:640px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow)}
+.card.main{grid-column:span 3;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:var(--p);color:#fff;border:0}
+.card.main h3,.card.main p{color:#fff}.card.main .ic{background:rgba(255,255,255,.16);color:#fff}
+.ic{width:52px;height:52px;border-radius:16px;background:var(--sage);color:var(--p);display:grid;place-items:center;margin-bottom:12px}
+.card.main .ic{margin:0;width:64px;height:64px}
+.ic svg{width:28px;height:28px}
+h3{margin:0 0 4px;font-size:19px;color:var(--p)}
+.card p{margin:0;color:var(--ink2);font-size:16px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.step{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;position:relative}
+.step:before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--p);color:#fff;font-weight:800;margin-bottom:10px}
+.step b{display:block;color:var(--p);margin-bottom:2px}.step span{color:var(--ink2);font-size:15px}
+.band{background:#e1ecfa}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+ul.ticks{list-style:none;padding:0;margin:0}ul.ticks li{padding:9px 0 9px 34px;position:relative;border-bottom:1px solid var(--line)}
+ul.ticks li:before{content:"";position:absolute;left:4px;top:15px;width:14px;height:8px;border-left:3px solid var(--p2);border-bottom:3px solid var(--p2);transform:rotate(-45deg)}
+.note{background:#fff3d6;color:#6b5217;border-radius:18px;padding:16px 18px;font-size:15px}
+.demo{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.demo a{display:block;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.demo a:hover{border-color:var(--p2)}.demo b{color:var(--p);display:block}.demo span{color:var(--muted);font-size:15px}
+footer{padding:34px 0 50px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+@media(max-width:860px){.hero{grid-template-columns:1fr;padding-top:36px}.mock{margin:0 auto}.grid{grid-template-columns:1fr 1fr}.card.main{grid-column:span 2}.steps{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.demo{grid-template-columns:1fr}.nav nav{display:none}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.card.main{grid-column:auto;grid-template-columns:1fr}.steps{grid-template-columns:1fr}body{font-size:16px}}
+</style>
+<link rel="stylesheet" href="looklens-glass.css">
+</head>
+<body>
+<header><div class="wrap nav">
+  <a href="#top" aria-label="LookLens"><img src="looklens-logo-minimal.svg" alt="LookLens"></a>
+  <nav><a href="#features">ฟีเจอร์</a><a href="#how">วิธีใช้</a><a href="#privacy">ความเป็นส่วนตัว</a><a href="#demo">ทดลองใช้</a></nav>
+  <a class="btn" href="#demo">ทดลองใช้</a>
+</div></header>
+
+<main id="top">
+<div class="wrap hero">
+  <div>
+    <span class="chip">กล้องตรวจจับการล้ม สำหรับผู้สูงอายุ</span>
+    <h1>มองดูแลคุณยาย<br>แม้ไม่ได้อยู่ข้างๆ</h1>
+    <p class="lead">LookLens เปลี่ยนมือถือเครื่องเก่าให้เป็นกล้องดูแลผู้สูงอายุ ตรวจจับการล้ม แจ้งลูกหลานทันที โทร 1669 ได้ในปุ่มเดียว และยังช่วยชวนออกกำลังกาย ติดตามกิจกรรมประจำวัน</p>
+    <div class="cta"><a class="btn" href="#demo">เริ่มทดลองใช้</a><a class="btn alt" href="#features">ดูฟีเจอร์ทั้งหมด</a></div>
+  </div>
+  <div class="mock" aria-hidden="true">
+    <div class="cam">
+      <span class="tag"><i></i>กำลังดูสด</span>
+      <svg viewBox="0 0 120 120" fill="none" stroke="#bfe0ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="24" r="9" fill="#bfe0ff" stroke="none"/><path d="M60 36v34M60 46l-20 14M60 46l20 14M60 70l-16 30M60 70l16 30"/></svg>
+    </div>
+    <div class="alert"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg><div><b>ตรวจพบการล้ม</b>แจ้งลูกหลานแล้ว · กดโทร 1669 ได้ทันที</div></div>
+  </div>
+</div>
+
+<section id="features"><div class="wrap">
+  <h2>ไม่ได้มีแค่ตรวจจับการล้ม</h2>
+  <p class="sub">รวมสิ่งที่ครอบครัวต้องใช้ในการดูแลผู้สูงอายุไว้ในที่เดียว ใช้งานง่าย ปุ่มใหญ่ ตัวอักษรอ่านสบาย</p>
+  <div class="grid">
+    <div class="card main"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg></div><div><h3>ตรวจจับการล้มด้วยกล้อง</h3><p>กล้องดูท่าทางของร่างกาย (ยืน นั่ง นอน) เมื่อพบว่าล้ม จะส่งแจ้งเตือนไปที่ลูกหลานทันที พร้อมเสียงเตือนและปุ่มโทร 1669 ทั้งฝั่งผู้สูงอายุและฝั่งลูกหลาน</p></div></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="4"/></svg></div><h3>มือถือเป็นกล้องวงจรปิด</h3><p>ใช้มือถือแอนดรอยเครื่องเก่าวางไว้ในบ้าน ภาพขึ้นบนคอมของลูกหลานแบบเรียลไทม์</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>ติดตามกิจกรรมประจำวัน</h3><p>เวลานั่ง ยืน เข้าห้องน้ำ และการเคลื่อนไหว สรุปเป็นกราฟและแจ้งเตือนถ้านั่งนานเกินไป</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/></svg></div><h3>ชวนออกกำลังกาย มีเสียงนำ</h3><p>ลูกหลานส่งโปรแกรมให้ มีเสียงสัญญาณและเสียงพูดภาษาไทยนำทีละท่า หมุนไหล่ ยกแขน ลุก-นั่งเก้าอี้</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></div><h3>วิดีโอคอลและข้อความ</h3><p>คุยหน้ากันระหว่างจอในบ้านกับลูกหลาน หรือส่งข้อความให้อ่านออกเสียงที่บ้าน</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l4 4v14H5V3z"/><path d="M9 13h6M9 17h6"/></svg></div><h3>สรุปสุขภาพและส่งออก PDF</h3><p>ดูภาพรวมรายวันและรายสัปดาห์ แล้วส่งออกเป็น PDF ไปให้หมอหรือญาติได้</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg></div><h3>แสตมป์และรางวัล</h3><p>ทำท่าออกกำลังกายสะสมแสตมป์ ได้รางวัลเล็กๆ เป็นกำลังใจให้ขยับทุกวัน</p></div>
+  </div>
+</div></section>
+
+<section id="how" class="band"><div class="wrap">
+  <h2>เริ่มใช้ใน 4 ขั้นตอน</h2>
+  <p class="sub">ไม่ต้องซื้ออุปกรณ์เพิ่ม ใช้คอมหนึ่งเครื่องกับมือถือแอนดรอยหนึ่งเครื่อง</p>
+  <div class="steps">
+    <div class="step"><b>เปิดโปรแกรมบนคอม</b><span>ดับเบิลคลิกไฟล์ เปิด LookLens ได้รหัสจับคู่ 6 หลัก</span></div>
+    <div class="step"><b>จับคู่มือถือ</b><span>เปิดหน้ากล้องบนมือถือ ใส่รหัสครั้งเดียว</span></div>
+    <div class="step"><b>วางมือถือในบ้าน</b><span>กด เริ่มส่งภาพ ระบบกันหน้าจอดับให้อัตโนมัติ</span></div>
+    <div class="step"><b>ลูกหลานดูบนคอม</b><span>เปิดหน้าลูกหลาน เห็นภาพสดและแจ้งเตือนทุกเหตุการณ์</span></div>
+  </div>
+</div></section>
+
+<section id="privacy"><div class="wrap two">
+  <div>
+    <h2>เป็นส่วนตัว อยู่ในเครือข่ายบ้านคุณ</h2>
+    <p class="sub">ข้อมูลและภาพไม่ถูกส่งขึ้นอินเทอร์เน็ตโดยค่าเริ่มต้น</p>
+    <ul class="ticks">
+      <li>แอปลูกหลานและหน้าสรุปเปิดได้เฉพาะในคอมเครื่องที่รันโปรแกรม</li>
+      <li>มือถือต้องจับคู่ด้วยรหัส 6 หลัก รับได้ 1 เครื่อง เครื่องอื่นเข้าไม่ได้</li>
+      <li>ประมวลผลท่าทางบนอุปกรณ์ ไม่เก็บวิดีโอ</li>
+      <li>มือถือมีแถบแจ้งทุกครั้งที่ลูกหลานกำลังดูภาพ</li>
+    </ul>
+  </div>
+  <div class="note"><b>โปรดทราบ</b><br>LookLens เป็นต้นแบบสำหรับสาธิต ไม่ใช่อุปกรณ์ทางการแพทย์ การตรวจจับจากกล้องอาจคลาดเคลื่อน ไม่ควรใช้แทนการดูแลโดยตรง หากมีเหตุฉุกเฉินให้โทร 1669 ทันที</div>
+</div></section>
+
+<section id="demo" class="band"><div class="wrap">
+  <h2>ทดลองใช้</h2>
+  <p class="sub">ลิงก์ด้านล่างเปิดได้เมื่อโปรแกรม LookLens รันอยู่บนคอมเครื่องนี้</p>
+  <div class="demo">
+    <a href="family.html"><b>แอปลูกหลาน</b><span>กิจกรรม ดูสด แจ้งเตือน Reward · เปิดได้เฉพาะในคอมนี้</span></a>
+    <a href="index.html"><b>จอในบ้าน</b><span>ปุ่มใหญ่สำหรับผู้สูงอายุ ออกกำลังกาย โทร เรียกช่วย</span></a>
+    <a href="summary.html"><b>หน้าสรุป + PDF</b><span>ภาพรวมสุขภาพรายวัน ส่งออก PDF</span></a>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">© LookLens · ต้นแบบเพื่อการเรียน ไม่ใช่อุปกรณ์ทางการแพทย์</div></footer>
+</body></html>

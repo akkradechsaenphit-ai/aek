@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#f8f7f3">
+<title>Carely ที่บ้าน</title>
+<link rel="icon" href="/static/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/carely.css">
+<style>
+  body { font-size: 22px; min-height: 100vh; overflow-x: hidden; }
+  .screen { min-height: 100vh; display: flex; flex-direction: column; padding: 28px clamp(16px, 4vw, 48px); }
+  .big-btn { font-size: clamp(24px, 3.4vw, 34px); padding: 26px 30px; border-radius: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 14px; box-shadow: var(--shadow); }
+  .big-btn .ic { font-size: 1.4em; }
+  .center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; }
+  .huge { font-size: clamp(90px, 16vw, 170px); line-height: 1; }
+  h1 { font-size: clamp(32px, 5vw, 52px); margin: 0; line-height: 1.25; }
+  h2 { font-size: clamp(26px, 3.6vw, 38px); margin: 0; line-height: 1.3; }
+  p.lead { font-size: clamp(22px, 3vw, 30px); margin: 0; color: var(--ink); max-width: 900px; }
+  .row { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; width: 100%; }
+  .row > button { flex: 1 1 260px; max-width: 460px; }
+
+  /* splash */
+  #splash { background: var(--sage); color: #fff; cursor: pointer; }
+  #splash .logo, #splash .logo span { color: #fff; font-size: 54px; }
+
+  /* home */
+  #home header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .clock { font-size: clamp(64px, 11vw, 120px); font-weight: 700; letter-spacing: -2px; line-height: 1; color: var(--ink); }
+  .date { color: var(--muted); font-size: clamp(20px, 2.6vw, 28px); }
+  .greet { margin-top: 10px; }
+  .home-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: auto; padding-top: 24px; }
+  .home-actions .play { background: var(--sage); color: #fff; }
+  .home-actions .sos { background: var(--red-pale); color: var(--red); border: 2px solid #f0c9c5; }
+  .msg-card { margin-top: 22px; background: #fff; border-radius: var(--radius); padding: 18px 22px; box-shadow: var(--shadow); display: flex; gap: 14px; align-items: flex-start; border-left: 6px solid var(--coral); }
+  .msg-card small { color: var(--muted); display: block; font-size: 17px; }
+
+  /* offer / done */
+  #offer, #done { background: linear-gradient(180deg, var(--sage-pale), var(--paper)); }
+  .from { font-size: 20px; color: var(--sage-dark); background: #fff; border-radius: 50px; padding: 6px 18px; }
+
+  /* game */
+  #game .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  #game .top h2 { font-size: 26px; }
+  .step-emoji { font-size: clamp(110px, 18vw, 190px); line-height: 1; transition: transform .2s; }
+  .step-emoji.pop { transform: scale(1.15); }
+  .counter { font-size: clamp(56px, 9vw, 96px); font-weight: 700; color: var(--sage-dark); line-height: 1; }
+  .bar { width: min(720px, 92%); height: 28px; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: inset 0 0 0 2px var(--line); }
+  .bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--sage), #93ad94); border-radius: 20px; transition: width .4s; }
+  .motion-hint { font-size: 24px; color: var(--amber); min-height: 34px; }
+  .motion-hint.ok { color: var(--sage-dark); }
+
+  /* memory */
+  .cards { display: grid; grid-template-columns: repeat(4, minmax(70px, 150px)); gap: 14px; }
+  .card { aspect-ratio: 3/4; font-size: clamp(40px, 7vw, 72px); background: var(--sage); color: #fff; border-radius: 18px; display: grid; place-items: center; padding: 0; box-shadow: var(--shadow); }
+  .card:hover { background: var(--sage-dark); }
+  .card.open, .card.open:hover { background: #fff; color: var(--ink); }
+  .card.matched, .card.matched:hover { background: var(--sage-pale); opacity: .65; }
+  @media (max-width: 520px) { .cards { grid-template-columns: repeat(4, 1fr); gap: 8px; } }
+
+  /* quiz */
+  .quiz-q { font-size: clamp(34px, 5.5vw, 58px); font-weight: 700; }
+  .choices { display: grid; gap: 14px; width: min(760px, 100%); }
+  .choices button { font-size: clamp(26px, 3.8vw, 38px); padding: 22px; background: #fff; color: var(--ink); border: 2px solid var(--line); border-radius: 22px; }
+  .choices button:disabled { opacity: 1; cursor: default; }
+  .choices button.right { background: var(--sage); color: #fff; border-color: var(--sage); }
+  .choices button.wrong { background: var(--red-pale); color: var(--red); border-color: #f0c9c5; }
+  .stars { font-size: 40px; letter-spacing: 4px; min-height: 52px; }
+
+  /* emergency */
+  #fallcheck, #alert, #sosconfirm { background: var(--red-pale); }
+  #fallcheck h1, #alert h1, #sosconfirm h1 { color: var(--red); }
+  .ok-btn { background: var(--sage); color: #fff; font-size: clamp(30px, 4.6vw, 46px); padding: 32px 40px; border-radius: 30px; min-width: min(560px, 100%); }
+  .ok-btn:hover { background: var(--sage-dark); }
+  .pulse { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: scale(1.06); } }
+
+  /* toast for family messages */
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(900px, calc(100% - 32px)); background: #fff; border-radius: 24px; padding: 22px 26px; box-shadow: 0 18px 50px rgba(0,0,0,.18); border-left: 8px solid var(--coral); display: flex; gap: 16px; align-items: flex-start; z-index: 50; }
+  #toast .t { font-size: clamp(24px, 3.2vw, 32px); font-weight: 600; }
+  #toast small { color: var(--muted); font-size: 18px; }
+  #toast button { margin-left: auto; flex: none; }
+  @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } .bar > i { transition: none; } }
+</style>
+</head>
+<body>
+
+<section class="screen" id="splash">
+  <div class="center">
+    <div class="logo">Care<span>ly</span></div>
+    <h1>แตะที่หน้าจอเพื่อเริ่มใช้งาน</h1>
+    <p class="lead" style="color:#fff">เปิดเสียงไว้ เครื่องจะพูดเตือนและชวนเล่นเกม</p>
+  </div>
+</section>
+
+<section class="screen" id="home" hidden>
+  <header>
+    <div class="logo">Care<span>ly</span></div>
+    <span class="chip" id="guard"><span class="dot"></span> ระบบดูแลทำงานอยู่</span>
+  </header>
+  <div style="margin-top:28px">
+    <div class="clock" id="clock">--:--</div>
+    <div class="date" id="date"></div>
+    <h1 class="greet" id="greet">สวัสดีค่ะ</h1>
+  </div>
+  <div class="msg-card" id="lastMsg" hidden>
+    <div style="font-size:40px">💌</div>
+    <div><small id="lastMsgFrom"></small><div id="lastMsgText" style="font-size:26px"></div></div>
+  </div>
+  <div class="home-actions">
+    <button class="big-btn play" id="wantGame"><span class="ic">🎮</span> อยากเล่นเกม</button>
+    <button class="big-btn sos" id="sosBtn"><span class="ic">🆘</span> ขอความช่วยเหลือ</button>
+  </div>
+</section>
+
+<section class="screen" id="offer" hidden>
+  <div class="center">
+    <span class="from" id="offerFrom"></span>
+    <div class="huge" id="offerEmoji">🎮</div>
+    <h1 id="offerTitle"></h1>
+    <p class="lead" id="offerSay"></p>
+    <div class="row" style="margin-top:12px">
+      <button class="big-btn primary" id="offerYes"><span class="ic">▶️</span> เล่นเลย</button>
+      <button class="big-btn ghost" id="offerLater"><span class="ic">⏰</span> ไว้ทีหลัง</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="game" hidden>
+  <div class="top">
+    <h2 id="gameTitle"></h2>
+    <button class="ghost" id="gameStop">หยุดเล่น</button>
+  </div>
+  <div class="center" id="gameBody"></div>
+</section>
+
+<section class="screen" id="done" hidden>
+  <div class="center">
+    <div class="huge">👏</div>
+    <h1 id="doneTitle">เก่งมากค่ะ</h1>
+    <p class="lead" id="doneText"></p>
+    <div class="stars" id="doneStars"></div>
+  </div>
+</section>
+
+<section class="screen" id="fallcheck" hidden>
+  <div class="center">
+    <div class="huge pulse">🤕</div>
+    <h1>เป็นอะไรไหมคะ?</h1>
+    <p class="lead" id="fallcheckText">ระบบเห็นว่าอาจล้ม ถ้าไม่เป็นไร แตะปุ่มสีเขียว</p>
+    <button class="ok-btn" data-ok>✅ ฉันไม่เป็นไร</button>
+    <p class="lead" style="color:var(--muted);font-size:22px">ถ้าไม่มีการตอบ ระบบจะแจ้งลูกหลานอัตโนมัติ</p>
+  </div>
+</section>
+
+<section class="screen" id="alert" hidden>
+  <div class="center">
+    <div class="huge">📲</div>
+    <h1 id="alertTitle">แจ้งลูกหลานแล้วค่ะ</h1>
+    <p class="lead" id="alertText">อยู่นิ่งๆ ก่อนนะคะ เดี๋ยวมีคนมาช่วย</p>
+    <button class="ok-btn" data-ok>✅ ฉันไม่เป็นไรแล้ว</button>
+  </div>
+</section>
+
+<section class="screen" id="sosconfirm" hidden>
+  <div class="center">
+    <div class="huge">🆘</div>
+    <h1>เรียกลูกหลานใช่ไหมคะ?</h1>
+    <p class="lead">ระบบจะส่งแจ้งเตือนด่วนไปที่หน้าเว็บของลูกหลาน</p>
+    <div class="row">
+      <button class="big-btn danger" id="sosYes">ใช่ เรียกเลย</button>
+      <button class="big-btn ghost" id="sosNo">ยกเลิก</button>
+    </div>
+  </div>
+</section>
+
+<div id="toast" hidden role="status" aria-live="polite">
+  <div style="font-size:44px">💌</div>
+  <div><small id="toastFrom"></small><div class="t" id="toastText"></div></div>
+  <button class="ghost" id="toastClose">ปิด</button>
+</div>
+
+<script src="/static/elder.js"></script>
+</body>
+</html>
